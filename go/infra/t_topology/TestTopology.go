@@ -72,14 +72,22 @@ func (this *TestTopology) VnicByPort(vnetPort, vnicNum int) IVirtualNetworkInter
 func (this *TestTopology) VnicByVnetNum(vnetNum, vnicNum int) IVirtualNetworkInterface {
 	this.mtx.RLock()
 	defer this.mtx.RUnlock()
-	vnetPort := int(this.vnetsOrder[vnetNum].Resources().Config().VnetPort)
+	vnetPort := int(this.vnetsOrder[vnetNum-1].Resources().Config().VnetPort)
 	alias := AliasOf(vnetPort, vnicNum)
 	return this.vnics[alias]
 }
 
-func (this *TestTopology) Handler(vnetPort, vnicNum int) *TestServicePointHandler {
+func (this *TestTopology) HandlerByPort(vnetPort, vnicNum int) *TestServicePointHandler {
 	this.mtx.RLock()
 	defer this.mtx.RUnlock()
+	alias := AliasOf(vnetPort, vnicNum)
+	return this.handlers[alias]
+}
+
+func (this *TestTopology) HandlerByVnetNum(vnetNum, vnicNum int) *TestServicePointHandler {
+	this.mtx.RLock()
+	defer this.mtx.RUnlock()
+	vnetPort := int(this.vnetsOrder[vnetNum-1].Resources().Config().VnetPort)
 	alias := AliasOf(vnetPort, vnicNum)
 	return this.handlers[alias]
 }
