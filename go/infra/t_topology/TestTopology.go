@@ -71,3 +71,12 @@ func (this *TestTopology) Handler(vnetPort, vnicNum int) *TestServicePointHandle
 	alias := AliasOf(vnetPort, vnicNum)
 	return this.handlers[alias]
 }
+
+func (this *TestTopology) Shutdown() {
+	for _, _vnic := range this.vnics {
+		_vnic.Shutdown()
+	}
+	for _, _vnet := range this.vnets {
+		_vnet.Shutdown()
+	}
+}
