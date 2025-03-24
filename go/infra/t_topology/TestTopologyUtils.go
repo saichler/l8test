@@ -27,6 +27,7 @@ func createVnic(vnetPort int, vnicNum int, serviceArea int32) (common.IVirtualNe
 		}
 	}
 	_vnic := vnic.NewVirtualNetworkInterface(_resources, nil)
+	_vnic.Resources().Config().KeepAliveIntervalSeconds = 2
 	_vnic.Start()
 	return _vnic, handler
 }
