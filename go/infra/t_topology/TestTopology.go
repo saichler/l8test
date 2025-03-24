@@ -116,3 +116,13 @@ func (this *TestTopology) AllHandlers() []*TestServicePointHandler {
 	}
 	return result
 }
+
+func (this *TestTopology) AllVnics() []IVirtualNetworkInterface {
+	this.mtx.RLock()
+	defer this.mtx.RUnlock()
+	result := make([]IVirtualNetworkInterface, 0)
+	for _, vnic := range this.vnics {
+		result = append(result, vnic)
+	}
+	return result
+}
