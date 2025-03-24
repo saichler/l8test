@@ -40,6 +40,7 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts ...int) *TestTopology {
 				this.vnics[_vnic.Resources().Config().LocalAlias] = _vnic
 				this.handlers[_vnic.Resources().Config().LocalAlias] = handler
 			}
+			Sleep()
 		}
 	}
 	Sleep()
