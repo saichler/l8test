@@ -126,3 +126,15 @@ func (this *TestTopology) AllVnics() []IVirtualNetworkInterface {
 	}
 	return result
 }
+
+func (this *TestTopology) RenewVnic(vnetNum, vnicNum int) {
+	vnetPort := int(this.vnetsOrder[vnetNum-1].Resources().Config().VnetPort)
+	if vnicNum == len(this.vnics)/len(this.vnets) {
+		_vnic, _ := createVnic(vnetPort, vnicNum, -1)
+		this.vnics[_vnic.Resources().Config().LocalAlias] = _vnic
+	} else {
+		_vnic, handler := createVnic(vnetPort, vnicNum, 0)
+		this.vnics[_vnic.Resources().Config().LocalAlias] = _vnic
+		this.handlers[_vnic.Resources().Config().LocalAlias] = handler
+	}
+}
