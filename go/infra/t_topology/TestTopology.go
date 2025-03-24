@@ -9,10 +9,11 @@ import (
 )
 
 type TestTopology struct {
-	vnets    map[string]*VNet
-	vnics    map[string]IVirtualNetworkInterface
-	handlers map[string]*TestServicePointHandler
-	mtx      *sync.RWMutex
+	vnets      map[string]*VNet
+	vnetsOrder []*VNet
+	vnics      map[string]IVirtualNetworkInterface
+	handlers   map[string]*TestServicePointHandler
+	mtx        *sync.RWMutex
 }
 
 func NewTestTopology(vnicCountPervNet int, vnetPorts ...int) *TestTopology {
@@ -20,11 +21,13 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts ...int) *TestTopology {
 	this.vnets = make(map[string]*VNet)
 	this.vnics = make(map[string]IVirtualNetworkInterface)
 	this.handlers = make(map[string]*TestServicePointHandler)
+	this.vnetsOrder = make([]*VNet, 0)
 	this.mtx = &sync.RWMutex{}
 
 	for _, vNetPort := range vnetPorts {
 		_vnet := createVnet(vNetPort)
 		this.vnets[_vnet.Resources().Config().LocalAlias] = _vnet
+		this.vnetsOrder = append(this.vnetsOrder, _vnet)
 	}
 	Sleep()
 	for i := 0; i < vnicCountPervNet; i++ {
@@ -40,12 +43,8 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts ...int) *TestTopology {
 		}
 	}
 	Sleep()
-	list := make([]*VNet, 0)
-	for _, _vnet := range this.vnets {
-		list = append(list, _vnet)
-	}
-	for i := 0; i < len(list)-1; i++ {
-		connectVnets(list[i], list[i+1])
+	for i := 0; i < len(this.vnetsOrder)-1; i++ {
+		connectVnets(this.vnetsOrder[i], this.vnetsOrder[i+1])
 		Sleep()
 	}
 	return this
@@ -58,9 +57,17 @@ func (this *TestTopology) Vnet(vnetPort int) *VNet {
 	return this.vnets[alias]
 }
 
-func (this *TestTopology) Vnic(vnetPort, vnicNum int) IVirtualNetworkInterface {
+func (this *TestTopology) VnicByPort(vnetPort, vnicNum int) IVirtualNetworkInterface {
 	this.mtx.RLock()
 	defer this.mtx.RUnlock()
+	alias := AliasOf(vnetPort, vnicNum)
+	return this.vnics[alias]
+}
+
+func (this *TestTopology) VnicByVnetNum(vnetNum, vnicNum int) IVirtualNetworkInterface {
+	this.mtx.RLock()
+	defer this.mtx.RUnlock()
+	vnetPort := int(this.vnetsOrder[vnetNum].Resources().Config().VnetPort)
 	alias := AliasOf(vnetPort, vnicNum)
 	return this.vnics[alias]
 }
