@@ -44,8 +44,10 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts ...int) *TestTopology {
 	}
 	Sleep()
 	for i := 0; i < len(this.vnetsOrder)-1; i++ {
-		connectVnets(this.vnetsOrder[i], this.vnetsOrder[i+1])
-		Sleep()
+		for j := i + 1; j < len(this.vnetsOrder); j++ {
+			connectVnets(this.vnetsOrder[i], this.vnetsOrder[j])
+			Sleep()
+		}
 	}
 	return this
 }
