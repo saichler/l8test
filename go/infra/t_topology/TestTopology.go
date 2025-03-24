@@ -80,3 +80,9 @@ func (this *TestTopology) Shutdown() {
 		_vnet.Shutdown()
 	}
 }
+
+func (this *TestTopology) ResetHandlers() {
+	for _, _handler := range this.handlers {
+		_handler.Reset()
+	}
+}
