@@ -30,15 +30,15 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts ...int) *TestTopology {
 		this.vnetsOrder = append(this.vnetsOrder, _vnet)
 	}
 	Sleep()
-	for i := 0; i < vnicCountPervNet; i++ {
-		for _, vNetPort := range vnetPorts {
-			if i < vnicCountPervNet-1 {
+	for _, vNetPort := range vnetPorts {
+		for i := 0; i < vnicCountPervNet; i++ {
+			if i == vnicCountPervNet-1 {
+				_vnic, _ := createVnic(vNetPort, i+1, -1)
+				this.vnics[_vnic.Resources().Config().LocalAlias] = _vnic
+			} else {
 				_vnic, handler := createVnic(vNetPort, i+1, 0)
 				this.vnics[_vnic.Resources().Config().LocalAlias] = _vnic
 				this.handlers[_vnic.Resources().Config().LocalAlias] = handler
-			} else {
-				_vnic, _ := createVnic(vNetPort, i+1, -1)
-				this.vnics[_vnic.Resources().Config().LocalAlias] = _vnic
 			}
 		}
 	}
@@ -92,4 +92,14 @@ func (this *TestTopology) ResetHandlers() {
 	for _, _handler := range this.handlers {
 		_handler.Reset()
 	}
+}
+
+func (this *TestTopology) AllHandlers() []*TestServicePointHandler {
+	this.mtx.RLock()
+	defer this.mtx.RUnlock()
+	result := make([]*TestServicePointHandler, 0)
+	for _, h := range this.handlers {
+		result = append(result, h)
+	}
+	return result
 }
