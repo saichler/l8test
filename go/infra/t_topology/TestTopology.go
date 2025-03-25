@@ -4,6 +4,7 @@ import (
 	. "github.com/saichler/l8test/go/infra/t_resources"
 	. "github.com/saichler/l8test/go/infra/t_servicepoints"
 	. "github.com/saichler/layer8/go/overlay/vnet"
+	"github.com/saichler/layer8/go/overlay/vnic"
 	. "github.com/saichler/types/go/common"
 	"sync"
 )
@@ -127,14 +128,17 @@ func (this *TestTopology) AllVnics() []IVirtualNetworkInterface {
 	return result
 }
 
-func (this *TestTopology) RenewVnic(vnetNum, vnicNum int) {
-	vnetPort := int(this.vnetsOrder[vnetNum-1].Resources().Config().VnetPort)
-	if vnicNum == len(this.vnics)/len(this.vnets) {
-		_vnic, _ := createVnic(vnetPort, vnicNum, -1)
-		this.vnics[_vnic.Resources().Config().LocalAlias] = _vnic
+func (this *TestTopology) RenewVnic(alias string) {
+	this.mtx.Lock()
+	defer this.mtx.Unlock()
+	nic, ok := this.vnics[alias]
+	if ok {
+		nic.Shutdown()
+		delete(this.vnics, alias)
+		nic = vnic.NewVirtualNetworkInterface(nic.Resources(), nil)
+		nic.Start()
+		this.vnics[alias] = nic
 	} else {
-		_vnic, handler := createVnic(vnetPort, vnicNum, 0)
-		this.vnics[_vnic.Resources().Config().LocalAlias] = _vnic
-		this.handlers[_vnic.Resources().Config().LocalAlias] = handler
+		Log.Error("Unable to find vnic ", alias)
 	}
 }
