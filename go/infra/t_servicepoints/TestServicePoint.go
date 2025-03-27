@@ -3,10 +3,10 @@ package t_servicepoints
 import (
 	"errors"
 	. "github.com/saichler/l8test/go/infra/t_resources"
+	. "github.com/saichler/serializer/go/serialize/object"
 	"github.com/saichler/types/go/common"
 	"github.com/saichler/types/go/testtypes"
 	"github.com/saichler/types/go/types"
-	"google.golang.org/protobuf/proto"
 	"sync/atomic"
 )
 
@@ -34,7 +34,7 @@ func NewTestServicePointHandler(name string) *TestServicePointHandler {
 	return tsp
 }
 
-func (this *TestServicePointHandler) Post(pb proto.Message, resourcs common.IResources) common.IMObjects {
+func (this *TestServicePointHandler) Post(pb common.IMObjects, resourcs common.IResources) common.IMObjects {
 	Log.Debug("Post -", this.name, "- Test callback")
 	this.postNumber.Add(1)
 	var err error
@@ -43,7 +43,7 @@ func (this *TestServicePointHandler) Post(pb proto.Message, resourcs common.IRes
 	}
 	return New(err, pb)
 }
-func (this *TestServicePointHandler) Put(pb proto.Message, resourcs common.IResources) common.IMObjects {
+func (this *TestServicePointHandler) Put(pb common.IMObjects, resourcs common.IResources) common.IMObjects {
 	Log.Debug("Put -", this.name, "- Test callback")
 	this.putNumber.Add(1)
 	var err error
@@ -52,7 +52,7 @@ func (this *TestServicePointHandler) Put(pb proto.Message, resourcs common.IReso
 	}
 	return New(err, pb)
 }
-func (this *TestServicePointHandler) Patch(pb proto.Message, resourcs common.IResources) common.IMObjects {
+func (this *TestServicePointHandler) Patch(pb common.IMObjects, resourcs common.IResources) common.IMObjects {
 	Log.Debug("Patch -", this.name, "- Test callback")
 	this.patchNumber.Add(1)
 	var err error
@@ -61,7 +61,7 @@ func (this *TestServicePointHandler) Patch(pb proto.Message, resourcs common.IRe
 	}
 	return New(err, pb)
 }
-func (this *TestServicePointHandler) Delete(pb proto.Message, resourcs common.IResources) common.IMObjects {
+func (this *TestServicePointHandler) Delete(pb common.IMObjects, resourcs common.IResources) common.IMObjects {
 	Log.Debug("Delete -", this.name, "- Test callback")
 	this.deleteNumber.Add(1)
 	var err error
@@ -70,7 +70,7 @@ func (this *TestServicePointHandler) Delete(pb proto.Message, resourcs common.IR
 	}
 	return New(err, pb)
 }
-func (this *TestServicePointHandler) GetCopy(pb proto.Message, resourcs common.IResources) common.IMObjects {
+func (this *TestServicePointHandler) GetCopy(pb common.IMObjects, resourcs common.IResources) common.IMObjects {
 	Log.Debug("Get -", this.name, "- Test callback")
 	this.getNumber.Add(1)
 	var err error
@@ -79,7 +79,7 @@ func (this *TestServicePointHandler) GetCopy(pb proto.Message, resourcs common.I
 	}
 	return New(err, pb)
 }
-func (this *TestServicePointHandler) Get(pb proto.Message, resourcs common.IResources) common.IMObjects {
+func (this *TestServicePointHandler) Get(pb common.IMObjects, resourcs common.IResources) common.IMObjects {
 	Log.Debug("Get -", this.name, "- Test callback")
 	this.getNumber.Add(1)
 	var err error
@@ -88,7 +88,7 @@ func (this *TestServicePointHandler) Get(pb proto.Message, resourcs common.IReso
 	}
 	return New(err, pb)
 }
-func (this *TestServicePointHandler) Failed(pb proto.Message, resourcs common.IResources, info *types.Message) common.IMObjects {
+func (this *TestServicePointHandler) Failed(pb common.IMObjects, resourcs common.IResources, info *types.Message) common.IMObjects {
 	dest := "n/a"
 	msg := "n/a"
 	if info != nil {
@@ -110,7 +110,9 @@ func (this *TestServicePointHandler) EndPoint() string {
 func (this *TestServicePointHandler) ServiceName() string {
 	return ServiceName
 }
-func (this *TestServicePointHandler) ServiceModel() proto.Message { return &testtypes.TestProto{} }
+func (this *TestServicePointHandler) ServiceModel() common.IMObjects {
+	return New(nil, &testtypes.TestProto{})
+}
 func (this *TestServicePointHandler) Transactional() bool {
 	return this.tr
 }
