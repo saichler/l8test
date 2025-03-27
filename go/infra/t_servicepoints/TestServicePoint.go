@@ -42,7 +42,7 @@ func (this *TestServicePointHandler) Post(pb proto.Message, resourcs common.IRes
 	if this.errorMode {
 		err = errors.New("Post - TestServicePointHandler Error")
 	}
-	return NewSWE(pb, err)
+	return New(err, pb)
 }
 func (this *TestServicePointHandler) Put(pb proto.Message, resourcs common.IResources) common.IResponse {
 	Log.Debug("Put -", this.name, "- Test callback")
@@ -51,7 +51,7 @@ func (this *TestServicePointHandler) Put(pb proto.Message, resourcs common.IReso
 	if this.errorMode {
 		err = errors.New("Put - TestServicePointHandler Error")
 	}
-	return NewSWE(pb, err)
+	return New(err, pb)
 }
 func (this *TestServicePointHandler) Patch(pb proto.Message, resourcs common.IResources) common.IResponse {
 	Log.Debug("Patch -", this.name, "- Test callback")
@@ -60,7 +60,7 @@ func (this *TestServicePointHandler) Patch(pb proto.Message, resourcs common.IRe
 	if this.errorMode {
 		err = errors.New("Patch - TestServicePointHandler Error")
 	}
-	return NewSWE(pb, err)
+	return New(err, pb)
 }
 func (this *TestServicePointHandler) Delete(pb proto.Message, resourcs common.IResources) common.IResponse {
 	Log.Debug("Delete -", this.name, "- Test callback")
@@ -69,7 +69,7 @@ func (this *TestServicePointHandler) Delete(pb proto.Message, resourcs common.IR
 	if this.errorMode {
 		err = errors.New("Delete - TestServicePointHandler Error")
 	}
-	return NewSWE(pb, err)
+	return New(err, pb)
 }
 func (this *TestServicePointHandler) GetCopy(pb proto.Message, resourcs common.IResources) common.IResponse {
 	Log.Debug("Get -", this.name, "- Test callback")
@@ -78,7 +78,7 @@ func (this *TestServicePointHandler) GetCopy(pb proto.Message, resourcs common.I
 	if this.errorMode {
 		err = errors.New("GetCopy - TestServicePointHandler Error")
 	}
-	return NewSWE(pb, err)
+	return New(err, pb)
 }
 func (this *TestServicePointHandler) Get(pb proto.Message, resourcs common.IResources) common.IResponse {
 	Log.Debug("Get -", this.name, "- Test callback")
@@ -87,7 +87,7 @@ func (this *TestServicePointHandler) Get(pb proto.Message, resourcs common.IReso
 	if this.errorMode {
 		err = errors.New("Get - TestServicePointHandler Error")
 	}
-	return NewSWE(pb, err)
+	return New(err, pb)
 }
 func (this *TestServicePointHandler) Failed(pb proto.Message, resourcs common.IResources, info *types.Message) common.IResponse {
 	dest := "n/a"
@@ -103,7 +103,7 @@ func (this *TestServicePointHandler) Failed(pb proto.Message, resourcs common.IR
 	if this.errorMode {
 		err = errors.New("Failed - TestServicePointHandler Error")
 	}
-	return NewSWE(pb, err)
+	return New(err, pb)
 }
 func (this *TestServicePointHandler) EndPoint() string {
 	return "/Tests"
