@@ -135,6 +135,9 @@ func (this *TestTopology) RenewVnic(alias string) {
 	if ok {
 		nic.Shutdown()
 		delete(this.vnics, alias)
+		r := nic.Resources()
+		r.Config().LocalUuid = ""
+		r.Config().RemoteUuid = ""
 		nic = vnic.NewVirtualNetworkInterface(nic.Resources(), nil)
 		nic.Start()
 		this.vnics[alias] = nic

@@ -3,6 +3,7 @@ package t_servicepoints
 import (
 	"errors"
 	. "github.com/saichler/l8test/go/infra/t_resources"
+	. "github.com/saichler/serializer/go/serialize/response"
 	"github.com/saichler/types/go/common"
 	"github.com/saichler/types/go/testtypes"
 	"github.com/saichler/types/go/types"
@@ -34,61 +35,61 @@ func NewTestServicePointHandler(name string) *TestServicePointHandler {
 	return tsp
 }
 
-func (this *TestServicePointHandler) Post(pb proto.Message, resourcs common.IResources) (proto.Message, error) {
+func (this *TestServicePointHandler) Post(pb proto.Message, resourcs common.IResources) common.IResponse {
 	Log.Debug("Post -", this.name, "- Test callback")
 	this.postNumber.Add(1)
 	var err error
 	if this.errorMode {
 		err = errors.New("Post - TestServicePointHandler Error")
 	}
-	return pb, err
+	return NewSWE(pb, err)
 }
-func (this *TestServicePointHandler) Put(pb proto.Message, resourcs common.IResources) (proto.Message, error) {
+func (this *TestServicePointHandler) Put(pb proto.Message, resourcs common.IResources) common.IResponse {
 	Log.Debug("Put -", this.name, "- Test callback")
 	this.putNumber.Add(1)
 	var err error
 	if this.errorMode {
 		err = errors.New("Put - TestServicePointHandler Error")
 	}
-	return pb, err
+	return NewSWE(pb, err)
 }
-func (this *TestServicePointHandler) Patch(pb proto.Message, resourcs common.IResources) (proto.Message, error) {
+func (this *TestServicePointHandler) Patch(pb proto.Message, resourcs common.IResources) common.IResponse {
 	Log.Debug("Patch -", this.name, "- Test callback")
 	this.patchNumber.Add(1)
 	var err error
 	if this.errorMode {
 		err = errors.New("Patch - TestServicePointHandler Error")
 	}
-	return pb, err
+	return NewSWE(pb, err)
 }
-func (this *TestServicePointHandler) Delete(pb proto.Message, resourcs common.IResources) (proto.Message, error) {
+func (this *TestServicePointHandler) Delete(pb proto.Message, resourcs common.IResources) common.IResponse {
 	Log.Debug("Delete -", this.name, "- Test callback")
 	this.deleteNumber.Add(1)
 	var err error
 	if this.errorMode {
 		err = errors.New("Delete - TestServicePointHandler Error")
 	}
-	return pb, err
+	return NewSWE(pb, err)
 }
-func (this *TestServicePointHandler) GetCopy(pb proto.Message, resourcs common.IResources) (proto.Message, error) {
+func (this *TestServicePointHandler) GetCopy(pb proto.Message, resourcs common.IResources) common.IResponse {
 	Log.Debug("Get -", this.name, "- Test callback")
 	this.getNumber.Add(1)
 	var err error
 	if this.errorMode {
 		err = errors.New("GetCopy - TestServicePointHandler Error")
 	}
-	return pb, err
+	return NewSWE(pb, err)
 }
-func (this *TestServicePointHandler) Get(pb proto.Message, resourcs common.IResources) (proto.Message, error) {
+func (this *TestServicePointHandler) Get(pb proto.Message, resourcs common.IResources) common.IResponse {
 	Log.Debug("Get -", this.name, "- Test callback")
 	this.getNumber.Add(1)
 	var err error
 	if this.errorMode {
 		err = errors.New("Get - TestServicePointHandler Error")
 	}
-	return pb, err
+	return NewSWE(pb, err)
 }
-func (this *TestServicePointHandler) Failed(pb proto.Message, resourcs common.IResources, info *types.Message) (proto.Message, error) {
+func (this *TestServicePointHandler) Failed(pb proto.Message, resourcs common.IResources, info *types.Message) common.IResponse {
 	dest := "n/a"
 	msg := "n/a"
 	if info != nil {
@@ -102,7 +103,7 @@ func (this *TestServicePointHandler) Failed(pb proto.Message, resourcs common.IR
 	if this.errorMode {
 		err = errors.New("Failed - TestServicePointHandler Error")
 	}
-	return pb, err
+	return NewSWE(pb, err)
 }
 func (this *TestServicePointHandler) EndPoint() string {
 	return "/Tests"
