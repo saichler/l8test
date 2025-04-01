@@ -34,7 +34,7 @@ func NewTestServicePointHandler(name string) *TestServicePointHandler {
 	return tsp
 }
 
-func (this *TestServicePointHandler) Post(pb common.IMObjects, resourcs common.IResources) common.IMObjects {
+func (this *TestServicePointHandler) Post(pb common.IElements, resourcs common.IResources) common.IElements {
 	Log.Debug("Post -", this.name, "- Test callback")
 	this.postNumber.Add(1)
 	var err error
@@ -43,7 +43,7 @@ func (this *TestServicePointHandler) Post(pb common.IMObjects, resourcs common.I
 	}
 	return New(err, pb.Element())
 }
-func (this *TestServicePointHandler) Put(pb common.IMObjects, resourcs common.IResources) common.IMObjects {
+func (this *TestServicePointHandler) Put(pb common.IElements, resourcs common.IResources) common.IElements {
 	Log.Debug("Put -", this.name, "- Test callback")
 	this.putNumber.Add(1)
 	var err error
@@ -52,7 +52,7 @@ func (this *TestServicePointHandler) Put(pb common.IMObjects, resourcs common.IR
 	}
 	return New(err, pb.Element())
 }
-func (this *TestServicePointHandler) Patch(pb common.IMObjects, resourcs common.IResources) common.IMObjects {
+func (this *TestServicePointHandler) Patch(pb common.IElements, resourcs common.IResources) common.IElements {
 	Log.Debug("Patch -", this.name, "- Test callback")
 	this.patchNumber.Add(1)
 	var err error
@@ -61,7 +61,7 @@ func (this *TestServicePointHandler) Patch(pb common.IMObjects, resourcs common.
 	}
 	return New(err, pb.Element())
 }
-func (this *TestServicePointHandler) Delete(pb common.IMObjects, resourcs common.IResources) common.IMObjects {
+func (this *TestServicePointHandler) Delete(pb common.IElements, resourcs common.IResources) common.IElements {
 	Log.Debug("Delete -", this.name, "- Test callback")
 	this.deleteNumber.Add(1)
 	var err error
@@ -70,7 +70,7 @@ func (this *TestServicePointHandler) Delete(pb common.IMObjects, resourcs common
 	}
 	return New(err, pb.Element())
 }
-func (this *TestServicePointHandler) GetCopy(pb common.IMObjects, resourcs common.IResources) common.IMObjects {
+func (this *TestServicePointHandler) GetCopy(pb common.IElements, resourcs common.IResources) common.IElements {
 	Log.Debug("Get -", this.name, "- Test callback")
 	this.getNumber.Add(1)
 	var err error
@@ -79,7 +79,7 @@ func (this *TestServicePointHandler) GetCopy(pb common.IMObjects, resourcs commo
 	}
 	return New(err, pb.Element())
 }
-func (this *TestServicePointHandler) Get(pb common.IMObjects, resourcs common.IResources) common.IMObjects {
+func (this *TestServicePointHandler) Get(pb common.IElements, resourcs common.IResources) common.IElements {
 	Log.Debug("Get -", this.name, "- Test callback")
 	this.getNumber.Add(1)
 	var err error
@@ -88,7 +88,7 @@ func (this *TestServicePointHandler) Get(pb common.IMObjects, resourcs common.IR
 	}
 	return New(err, pb.Element())
 }
-func (this *TestServicePointHandler) Failed(pb common.IMObjects, resourcs common.IResources, info *types.Message) common.IMObjects {
+func (this *TestServicePointHandler) Failed(pb common.IElements, resourcs common.IResources, info *types.Message) common.IElements {
 	dest := "n/a"
 	msg := "n/a"
 	if info != nil {
@@ -110,7 +110,7 @@ func (this *TestServicePointHandler) EndPoint() string {
 func (this *TestServicePointHandler) ServiceName() string {
 	return ServiceName
 }
-func (this *TestServicePointHandler) ServiceModel() common.IMObjects {
+func (this *TestServicePointHandler) ServiceModel() common.IElements {
 	return New(nil, &testtypes.TestProto{})
 }
 func (this *TestServicePointHandler) Transactional() bool {

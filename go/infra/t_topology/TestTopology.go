@@ -27,7 +27,7 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts ...int) *TestTopology {
 
 	for _, vNetPort := range vnetPorts {
 		_vnet := createVnet(vNetPort)
-		this.vnets[_vnet.Resources().Config().LocalAlias] = _vnet
+		this.vnets[_vnet.Resources().SysConfig().LocalAlias] = _vnet
 		this.vnetsOrder = append(this.vnetsOrder, _vnet)
 	}
 	Sleep()
@@ -35,11 +35,11 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts ...int) *TestTopology {
 		for i := 0; i < vnicCountPervNet; i++ {
 			if i == vnicCountPervNet-1 {
 				_vnic, _ := createVnic(vNetPort, i+1, -1)
-				this.vnics[_vnic.Resources().Config().LocalAlias] = _vnic
+				this.vnics[_vnic.Resources().SysConfig().LocalAlias] = _vnic
 			} else {
 				_vnic, handler := createVnic(vNetPort, i+1, 0)
-				this.vnics[_vnic.Resources().Config().LocalAlias] = _vnic
-				this.handlers[_vnic.Resources().Config().LocalAlias] = handler
+				this.vnics[_vnic.Resources().SysConfig().LocalAlias] = _vnic
+				this.handlers[_vnic.Resources().SysConfig().LocalAlias] = handler
 			}
 			Sleep()
 		}
@@ -73,7 +73,7 @@ func (this *TestTopology) VnicByPort(vnetPort, vnicNum int) IVirtualNetworkInter
 func (this *TestTopology) VnicByVnetNum(vnetNum, vnicNum int) IVirtualNetworkInterface {
 	this.mtx.RLock()
 	defer this.mtx.RUnlock()
-	vnetPort := int(this.vnetsOrder[vnetNum-1].Resources().Config().VnetPort)
+	vnetPort := int(this.vnetsOrder[vnetNum-1].Resources().SysConfig().VnetPort)
 	alias := AliasOf(vnetPort, vnicNum)
 	return this.vnics[alias]
 }
@@ -88,7 +88,7 @@ func (this *TestTopology) HandlerByPort(vnetPort, vnicNum int) *TestServicePoint
 func (this *TestTopology) HandlerByVnetNum(vnetNum, vnicNum int) *TestServicePointHandler {
 	this.mtx.RLock()
 	defer this.mtx.RUnlock()
-	vnetPort := int(this.vnetsOrder[vnetNum-1].Resources().Config().VnetPort)
+	vnetPort := int(this.vnetsOrder[vnetNum-1].Resources().SysConfig().VnetPort)
 	alias := AliasOf(vnetPort, vnicNum)
 	return this.handlers[alias]
 }
@@ -136,8 +136,8 @@ func (this *TestTopology) RenewVnic(alias string) {
 		nic.Shutdown()
 		delete(this.vnics, alias)
 		r := nic.Resources()
-		r.Config().LocalUuid = ""
-		r.Config().RemoteUuid = ""
+		r.SysConfig().LocalUuid = ""
+		r.SysConfig().RemoteUuid = ""
 		nic = vnic.NewVirtualNetworkInterface(nic.Resources(), nil)
 		nic.Start()
 		this.vnics[alias] = nic

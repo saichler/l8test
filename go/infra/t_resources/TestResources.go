@@ -28,7 +28,7 @@ func CreateResources(vnetPort, vnicNum int) (common.IResources, string) {
 	if err != nil {
 		panic("Failed to load security provider")
 	}
-	_config := &types.VNicConfig{MaxDataSize: resources.DEFAULT_MAX_DATA_SIZE,
+	_config := &types.SysConfig{MaxDataSize: resources.DEFAULT_MAX_DATA_SIZE,
 		RxQueueSize: resources.DEFAULT_QUEUE_SIZE,
 		TxQueueSize: resources.DEFAULT_QUEUE_SIZE,
 		LocalAlias:  alias,

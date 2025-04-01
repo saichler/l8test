@@ -27,13 +27,13 @@ func createVnic(vnetPort int, vnicNum int, serviceArea int32) (common.IVirtualNe
 		}
 	}
 	_vnic := vnic.NewVirtualNetworkInterface(_resources, nil)
-	_vnic.Resources().Config().KeepAliveIntervalSeconds = 30
+	_vnic.Resources().SysConfig().KeepAliveIntervalSeconds = 30
 	_vnic.Start()
 	return _vnic, handler
 }
 
 func connectVnets(vnet1, vnet2 *vnet.VNet) {
-	vnet1.ConnectNetworks("127.0.0.1", vnet2.Resources().Config().VnetPort)
+	vnet1.ConnectNetworks("127.0.0.1", vnet2.Resources().SysConfig().VnetPort)
 }
 
 func Sleep() {
