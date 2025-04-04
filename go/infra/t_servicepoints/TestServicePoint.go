@@ -6,7 +6,6 @@ import (
 	. "github.com/saichler/serializer/go/serialize/object"
 	"github.com/saichler/types/go/common"
 	"github.com/saichler/types/go/testtypes"
-	"github.com/saichler/types/go/types"
 	"sync/atomic"
 )
 
@@ -88,12 +87,12 @@ func (this *TestServicePointHandler) Get(pb common.IElements, resourcs common.IR
 	}
 	return New(err, pb.Element())
 }
-func (this *TestServicePointHandler) Failed(pb common.IElements, resourcs common.IResources, info *types.Message) common.IElements {
+func (this *TestServicePointHandler) Failed(pb common.IElements, resourcs common.IResources, info common.IMessage) common.IElements {
 	dest := "n/a"
 	msg := "n/a"
 	if info != nil {
-		dest = info.Source
-		msg = info.FailMsg
+		dest = info.Source()
+		msg = info.FailMessage()
 	}
 	Log.Debug("Failed -", this.name, " to ", dest, "- Test callback")
 	Log.Debug("Failed Reason is ", msg)
