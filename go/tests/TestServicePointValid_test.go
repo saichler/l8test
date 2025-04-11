@@ -1,6 +1,9 @@
 package tests
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 func TestMain(m *testing.M) {
 	setup()
@@ -9,4 +12,5 @@ func TestMain(m *testing.M) {
 }
 
 func TestServicePointValid(t *testing.T) {
+	time.Sleep(time.Minute)
 }

@@ -24,9 +24,9 @@ var Log = logger.NewLoggerDirectImpl(&logger.FmtLogMethod{})
 func CreateResources(vnetPort, vnicNum int) (common.IResources, string) {
 	alias := AliasOf(vnetPort, vnicNum)
 	_registry := registry.NewRegistry()
-	_security, err := common.LoadSecurityProvider("security.so", "../../../")
+	_security, err := common.LoadSecurityProvider("security.so", "../../../../")
 	if err != nil {
-		panic("Failed to load security provider")
+		panic("Failed to load security provider " + err.Error())
 	}
 	_config := &types.SysConfig{MaxDataSize: resources.DEFAULT_MAX_DATA_SIZE,
 		RxQueueSize: resources.DEFAULT_QUEUE_SIZE,

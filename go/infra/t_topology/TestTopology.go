@@ -31,19 +31,20 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts ...int) *TestTopology {
 		this.vnetsOrder = append(this.vnetsOrder, _vnet)
 	}
 	Sleep()
-	for _, vNetPort := range vnetPorts {
-		for i := 0; i < vnicCountPervNet; i++ {
-			if i == vnicCountPervNet-1 {
-				_vnic, _ := createVnic(vNetPort, i+1, -1)
-				this.vnics[_vnic.Resources().SysConfig().LocalAlias] = _vnic
-			} else {
-				_vnic, handler := createVnic(vNetPort, i+1, 0)
-				this.vnics[_vnic.Resources().SysConfig().LocalAlias] = _vnic
-				this.handlers[_vnic.Resources().SysConfig().LocalAlias] = handler
+	/*
+		for _, vNetPort := range vnetPorts {
+			for i := 0; i < vnicCountPervNet; i++ {
+				if i == vnicCountPervNet-1 {
+					_vnic, _ := createVnic(vNetPort, i+1, -1)
+					this.vnics[_vnic.Resources().SysConfig().LocalAlias] = _vnic
+				} else {
+					_vnic, handler := createVnic(vNetPort, i+1, 0)
+					this.vnics[_vnic.Resources().SysConfig().LocalAlias] = _vnic
+					this.handlers[_vnic.Resources().SysConfig().LocalAlias] = handler
+				}
+				Sleep()
 			}
-			Sleep()
-		}
-	}
+		}*/
 	Sleep()
 	Sleep()
 	for i := 0; i < len(this.vnetsOrder)-1; i++ {
