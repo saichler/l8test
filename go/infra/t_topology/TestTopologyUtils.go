@@ -21,11 +21,11 @@ func createVnic(vnetPort int, vnicNum int, serviceArea int32) (common.IVirtualNe
 	var handler *t_servicepoints.TestServicePointHandler
 	if serviceArea != -1 {
 		_resources.ServicePoints().AddServicePointType(&t_servicepoints.TestServicePointHandler{})
-		err := _resources.ServicePoints().Activate(t_servicepoints.ServicePointType, t_servicepoints.ServiceName, 0, _resources, nil, alias)
+		h, err := _resources.ServicePoints().Activate(t_servicepoints.ServicePointType, t_servicepoints.ServiceName, 0, _resources, nil, alias)
 		if err != nil {
 			panic(err)
 		}
-
+		handler = h.(*t_servicepoints.TestServicePointHandler)
 	}
 	_vnic := vnic.NewVirtualNetworkInterface(_resources, nil)
 	_vnic.Resources().SysConfig().KeepAliveIntervalSeconds = 30
