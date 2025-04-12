@@ -12,5 +12,5 @@ func TestMain(m *testing.M) {
 }
 
 func TestServicePointValid(t *testing.T) {
-	time.Sleep(time.Minute)
+	time.Sleep(time.Second * 5)
 }

@@ -24,13 +24,14 @@ type TestServicePointHandler struct {
 }
 
 const (
-	ServiceName = "Tests"
+	ServiceName      = "Tests"
+	ServicePointType = "TestServicePointHandler"
 )
 
-func NewTestServicePointHandler(name string) *TestServicePointHandler {
-	tsp := &TestServicePointHandler{}
-	tsp.name = name
-	return tsp
+func (this *TestServicePointHandler) Activate(serviceName string, serviceArea uint16,
+	r common.IResources, l common.IServicePointCacheListener, args ...string) error {
+	this.name = args[0]
+	return nil
 }
 
 func (this *TestServicePointHandler) Post(pb common.IElements, resourcs common.IResources) common.IElements {
