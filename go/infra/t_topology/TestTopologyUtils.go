@@ -6,6 +6,7 @@ import (
 	"github.com/saichler/layer8/go/overlay/vnet"
 	"github.com/saichler/layer8/go/overlay/vnic"
 	"github.com/saichler/types/go/common"
+	"github.com/saichler/types/go/testtypes"
 	"time"
 )
 
@@ -20,6 +21,7 @@ func createVnic(vnetPort int, vnicNum int, serviceArea int32) (common.IVirtualNe
 	_resources, alias := t_resources.CreateResources(vnetPort, vnicNum)
 	var handler *t_servicepoints.TestServicePointHandler
 	if serviceArea != -1 {
+		_resources.Registry().Register(&testtypes.TestProto{})
 		_resources.ServicePoints().AddServicePointType(&t_servicepoints.TestServicePointHandler{})
 		h, err := _resources.ServicePoints().Activate(t_servicepoints.ServicePointType, t_servicepoints.ServiceName, 0, _resources, nil, alias)
 		if err != nil {
