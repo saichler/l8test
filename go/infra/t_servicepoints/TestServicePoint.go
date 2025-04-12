@@ -29,8 +29,8 @@ const (
 )
 
 func (this *TestServicePointHandler) Activate(serviceName string, serviceArea uint16,
-	r common.IResources, l common.IServicePointCacheListener, args ...string) error {
-	this.name = args[0]
+	r common.IResources, l common.IServicePointCacheListener, args ...interface{}) error {
+	this.name = args[0].(string)
 	return nil
 }
 
