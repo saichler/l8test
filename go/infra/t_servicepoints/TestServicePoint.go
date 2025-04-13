@@ -34,6 +34,10 @@ func (this *TestServicePointHandler) Activate(serviceName string, serviceArea ui
 	return nil
 }
 
+func (this *TestServicePointHandler) DeActivate() error {
+	return nil
+}
+
 func (this *TestServicePointHandler) Post(pb common.IElements, resourcs common.IResources) common.IElements {
 	Log.Debug("Post -", this.name, "- Test callback")
 	this.postNumber.Add(1)
