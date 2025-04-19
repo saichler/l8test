@@ -11,6 +11,7 @@ import (
 	"github.com/saichler/types/go/testtypes"
 	"github.com/saichler/types/go/types"
 	"strconv"
+	"testing"
 	"time"
 )
 
@@ -91,4 +92,18 @@ func CreateTestModelInstance(index int) *testtypes.TestProto {
 		MyEnum:             testtypes.TestEnum_ValueOne,
 	}
 	return i
+}
+
+func WaitForCondition(cond func() bool, timeoutInSeconds int64, t *testing.T, failMessage string) bool {
+	start := time.Now().UnixMilli()
+	end := start + timeoutInSeconds*1000
+	for start < end {
+		if cond() {
+			return true
+		}
+		time.Sleep(time.Millisecond * 100)
+		start += 100
+	}
+	Log.Fail(t, failMessage)
+	return false
 }
