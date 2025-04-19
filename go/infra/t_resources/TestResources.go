@@ -23,6 +23,7 @@ var Log = logger.NewLoggerDirectImpl(&logger.FmtLogMethod{})
 
 func CreateResources(vnetPort, vnicNum int) (common.IResources, string) {
 	alias := AliasOf(vnetPort, vnicNum)
+	_log := logger.NewLoggerDirectImpl(&logger.FmtLogMethod{})
 	_registry := registry.NewRegistry()
 	_security, err := common.LoadSecurityProvider("security.so", "../../../../")
 	if err != nil {
@@ -35,7 +36,7 @@ func CreateResources(vnetPort, vnicNum int) (common.IResources, string) {
 		VnetPort:    uint32(vnetPort)}
 	_introspector := introspecting.NewIntrospect(_registry)
 	_servicepoints := service_points.NewServicePoints(_introspector, _config)
-	_resources := resources.NewResources(_registry, _security, _servicepoints, Log, nil, nil, _config, _introspector)
+	_resources := resources.NewResources(_registry, _security, _servicepoints, _log, nil, nil, _config, _introspector)
 	return _resources, alias
 }
 

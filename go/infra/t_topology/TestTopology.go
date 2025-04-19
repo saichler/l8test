@@ -4,7 +4,7 @@ import (
 	. "github.com/saichler/l8test/go/infra/t_resources"
 	. "github.com/saichler/l8test/go/infra/t_servicepoints"
 	. "github.com/saichler/layer8/go/overlay/vnet"
-	"github.com/saichler/layer8/go/overlay/vnic"
+	. "github.com/saichler/layer8/go/overlay/vnic"
 	. "github.com/saichler/types/go/common"
 	"sync"
 )
@@ -140,10 +140,31 @@ func (this *TestTopology) RenewVnic(alias string) {
 		r := nic.Resources()
 		r.SysConfig().LocalUuid = ""
 		r.SysConfig().RemoteUuid = ""
-		nic = vnic.NewVirtualNetworkInterface(nic.Resources(), nil)
+		nic = NewVirtualNetworkInterface(nic.Resources(), nil)
 		nic.Start()
 		this.vnics[alias] = nic
 	} else {
 		Log.Error("Unable to find vnic ", alias)
 	}
+}
+
+func (this *TestTopology) SetLogLevel(lvl LogLevel) {
+	this.mtx.Lock()
+	defer this.mtx.Unlock()
+	for _, net := range this.vnets {
+		net.Resources().Logger().SetLogLevel(lvl)
+	}
+	for _, nic := range this.vnics {
+		nic.Resources().Logger().SetLogLevel(lvl)
+	}
+}
+
+func (this *TestTopology) ReActivateTestService(nic IVirtualNetworkInterface) {
+	h, err := nic.Resources().ServicePoints().Activate(ServicePointType, ServiceName, 0, nic.Resources(), nil,
+		nic.Resources().SysConfig().LocalAlias)
+	if err != nil {
+		panic(err)
+	}
+	handler := h.(*TestServicePointHandler)
+	this.handlers[nic.Resources().SysConfig().LocalAlias] = handler
 }
