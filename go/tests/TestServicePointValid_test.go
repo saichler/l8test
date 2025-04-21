@@ -1,8 +1,9 @@
 package tests
 
 import (
+	"github.com/saichler/l8test/go/infra/t_resources"
+	"github.com/saichler/layer8/go/overlay/health"
 	"testing"
-	"time"
 )
 
 func TestMain(m *testing.M) {
@@ -12,5 +13,16 @@ func TestMain(m *testing.M) {
 }
 
 func TestServicePointValid(t *testing.T) {
-	time.Sleep(time.Second * 5)
+	for vnetNum := 1; vnetNum <= 3; vnetNum++ {
+		for vnicNum := 1; vnicNum <= 4; vnicNum++ {
+			nic := topo.VnicByVnetNum(vnetNum, vnicNum)
+			hc := health.Health(nic.Resources())
+			hp := hc.All()
+			if len(hp) != 15 {
+				t_resources.Log.Fail(t, "Expected ", nic.Resources().SysConfig().LocalAlias,
+					" to have 15 heath points, but it has ", len(hp))
+				return
+			}
+		}
+	}
 }

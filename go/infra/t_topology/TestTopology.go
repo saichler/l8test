@@ -7,6 +7,7 @@ import (
 	. "github.com/saichler/layer8/go/overlay/vnic"
 	. "github.com/saichler/types/go/common"
 	"sync"
+	"time"
 )
 
 type TestTopology struct {
@@ -55,6 +56,7 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts ...int) *TestTopology {
 			Sleep()
 		}
 	}
+	time.Sleep(time.Second)
 	return this
 }
 
