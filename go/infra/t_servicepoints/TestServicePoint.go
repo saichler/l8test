@@ -9,7 +9,7 @@ import (
 	"sync/atomic"
 )
 
-type TestServicePointHandler struct {
+type TestServicePointBase struct {
 	name         string
 	postNumber   atomic.Int32
 	putNumber    atomic.Int32
@@ -26,71 +26,71 @@ const (
 	ServicePointTrType = "TestServicePointTransactionHandler"
 )
 
-func (this *TestServicePointHandler) Activate(serviceName string, serviceArea uint16,
+func (this *TestServicePointBase) Activate(serviceName string, serviceArea uint16,
 	r common.IResources, l common.IServicePointCacheListener, args ...interface{}) error {
 	this.name = args[0].(string)
 	return nil
 }
 
-func (this *TestServicePointHandler) DeActivate() error {
+func (this *TestServicePointBase) DeActivate() error {
 	return nil
 }
 
-func (this *TestServicePointHandler) Post(pb common.IElements, resourcs common.IResources) common.IElements {
+func (this *TestServicePointBase) Post(pb common.IElements, resourcs common.IResources) common.IElements {
 	Log.Debug("Post -", this.name, "- Test callback")
 	this.postNumber.Add(1)
 	var err error
 	if this.errorMode {
-		err = errors.New("Post - TestServicePointHandler Error")
+		err = errors.New("Post - TestServicePointBase Error")
 	}
 	return New(err, pb.Element())
 }
-func (this *TestServicePointHandler) Put(pb common.IElements, resourcs common.IResources) common.IElements {
+func (this *TestServicePointBase) Put(pb common.IElements, resourcs common.IResources) common.IElements {
 	Log.Debug("Put -", this.name, "- Test callback")
 	this.putNumber.Add(1)
 	var err error
 	if this.errorMode {
-		err = errors.New("Put - TestServicePointHandler Error")
+		err = errors.New("Put - TestServicePointBase Error")
 	}
 	return New(err, pb.Element())
 }
-func (this *TestServicePointHandler) Patch(pb common.IElements, resourcs common.IResources) common.IElements {
+func (this *TestServicePointBase) Patch(pb common.IElements, resourcs common.IResources) common.IElements {
 	Log.Debug("Patch -", this.name, "- Test callback")
 	this.patchNumber.Add(1)
 	var err error
 	if this.errorMode {
-		err = errors.New("Patch - TestServicePointHandler Error")
+		err = errors.New("Patch - TestServicePointBase Error")
 	}
 	return New(err, pb.Element())
 }
-func (this *TestServicePointHandler) Delete(pb common.IElements, resourcs common.IResources) common.IElements {
+func (this *TestServicePointBase) Delete(pb common.IElements, resourcs common.IResources) common.IElements {
 	Log.Debug("Delete -", this.name, "- Test callback")
 	this.deleteNumber.Add(1)
 	var err error
 	if this.errorMode {
-		err = errors.New("Delete - TestServicePointHandler Error")
+		err = errors.New("Delete - TestServicePointBase Error")
 	}
 	return New(err, pb.Element())
 }
-func (this *TestServicePointHandler) GetCopy(pb common.IElements, resourcs common.IResources) common.IElements {
+func (this *TestServicePointBase) GetCopy(pb common.IElements, resourcs common.IResources) common.IElements {
 	Log.Debug("Get -", this.name, "- Test callback")
 	this.getNumber.Add(1)
 	var err error
 	if this.errorMode {
-		err = errors.New("GetCopy - TestServicePointHandler Error")
+		err = errors.New("GetCopy - TestServicePointBase Error")
 	}
 	return New(err, pb.Element())
 }
-func (this *TestServicePointHandler) Get(pb common.IElements, resourcs common.IResources) common.IElements {
+func (this *TestServicePointBase) Get(pb common.IElements, resourcs common.IResources) common.IElements {
 	Log.Debug("Get -", this.name, "- Test callback")
 	this.getNumber.Add(1)
 	var err error
 	if this.errorMode {
-		err = errors.New("Get - TestServicePointHandler Error")
+		err = errors.New("Get - TestServicePointBase Error")
 	}
 	return New(err, pb.Element())
 }
-func (this *TestServicePointHandler) Failed(pb common.IElements, resourcs common.IResources, info common.IMessage) common.IElements {
+func (this *TestServicePointBase) Failed(pb common.IElements, resourcs common.IResources, info common.IMessage) common.IElements {
 	dest := "n/a"
 	msg := "n/a"
 	if info != nil {
@@ -102,18 +102,22 @@ func (this *TestServicePointHandler) Failed(pb common.IElements, resourcs common
 	this.failedNumber.Add(1)
 	var err error
 	if this.errorMode {
-		err = errors.New("Failed - TestServicePointHandler Error")
+		err = errors.New("Failed - TestServicePointBase Error")
 	}
 	return New(err, pb.Element())
 }
-func (this *TestServicePointHandler) EndPoint() string {
+func (this *TestServicePointBase) EndPoint() string {
 	return "/Tests"
 }
-func (this *TestServicePointHandler) ServiceName() string {
+func (this *TestServicePointBase) ServiceName() string {
 	return ServiceName
 }
-func (this *TestServicePointHandler) ServiceModel() common.IElements {
+func (this *TestServicePointBase) ServiceModel() common.IElements {
 	return New(nil, &testtypes.TestProto{})
+}
+
+type TestServicePointHandler struct {
+	TestServicePointBase
 }
 
 func (this *TestServicePointHandler) TransactionMethod() common.ITransactionMethod {
@@ -121,7 +125,7 @@ func (this *TestServicePointHandler) TransactionMethod() common.ITransactionMeth
 }
 
 type TestServicePointTransactionHandler struct {
-	TestServicePointHandler
+	TestServicePointBase
 	replicationCount int
 }
 
@@ -130,4 +134,8 @@ func (this *TestServicePointTransactionHandler) Replication() bool {
 }
 func (this *TestServicePointTransactionHandler) ReplicationCount() int {
 	return this.replicationCount
+}
+
+func (this *TestServicePointTransactionHandler) TransactionMethod() common.ITransactionMethod {
+	return this
 }
