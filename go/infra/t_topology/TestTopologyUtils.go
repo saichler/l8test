@@ -40,16 +40,19 @@ func createVnic(vnetPort int, vnicNum int, serviceArea int32) (common.IVirtualNe
 			panic(err)
 		}
 		handlerTr = hTr.(*t_servicepoints.TestServicePointTransactionHandler)
+	}
+	_vnic := vnic.NewVirtualNetworkInterface(_resources, nil)
+	_vnic.Resources().SysConfig().KeepAliveIntervalSeconds = 30
+	_vnic.Start()
 
+	if serviceArea != -1 {
 		hRep, err := _resources.ServicePoints().Activate(t_servicepoints.ServicePointRepType, t_servicepoints.ServiceName, 2, _resources, nil, alias)
 		if err != nil {
 			panic(err)
 		}
 		handlerRep = hRep.(*t_servicepoints.TestServicePointReplicationHandler)
 	}
-	_vnic := vnic.NewVirtualNetworkInterface(_resources, nil)
-	_vnic.Resources().SysConfig().KeepAliveIntervalSeconds = 30
-	_vnic.Start()
+
 	return _vnic, handler, handlerTr, handlerRep
 }
 
