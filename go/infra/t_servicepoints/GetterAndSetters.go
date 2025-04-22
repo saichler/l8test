@@ -1,6 +1,6 @@
 package t_servicepoints
 
-func (this *TestServicePointHandler) Reset() {
+func (this *TestServicePointBase) Reset() {
 	this.postNumber.Add(this.postNumber.Load() * -1)
 	this.putNumber.Add(this.putNumber.Load() * -1)
 	this.patchNumber.Add(this.patchNumber.Load() * -1)
@@ -9,39 +9,39 @@ func (this *TestServicePointHandler) Reset() {
 	this.errorMode = false
 }
 
-func (this *TestServicePointHandler) Name() string {
+func (this *TestServicePointBase) Name() string {
 	return this.name
 }
 
-func (this *TestServicePointHandler) ErrorMode() bool {
+func (this *TestServicePointBase) ErrorMode() bool {
 	return this.errorMode
 }
 
-func (this *TestServicePointHandler) SetErrorMode(b bool) {
+func (this *TestServicePointBase) SetErrorMode(b bool) {
 	this.errorMode = b
 }
 
-func (this *TestServicePointHandler) PostN() int {
+func (this *TestServicePointBase) PostN() int {
 	return int(this.postNumber.Load())
 }
 
-func (this *TestServicePointHandler) PutN() int {
+func (this *TestServicePointBase) PutN() int {
 	return int(this.putNumber.Load())
 }
 
-func (this *TestServicePointHandler) PatchN() int {
+func (this *TestServicePointBase) PatchN() int {
 	return int(this.patchNumber.Load())
 }
 
-func (this *TestServicePointHandler) GetN() int {
+func (this *TestServicePointBase) GetN() int {
 	return int(this.getNumber.Load())
 }
 
-func (this *TestServicePointHandler) DeleteN() int {
+func (this *TestServicePointBase) DeleteN() int {
 	return int(this.deleteNumber.Load())
 }
 
-func (this *TestServicePointHandler) FailedN() int {
+func (this *TestServicePointBase) FailedN() int {
 	return int(this.failedNumber.Load())
 }
 
