@@ -100,6 +100,14 @@ func (this *TestTopology) HandlerByVnetNum(vnetNum, vnicNum int) *TestServicePoi
 	return this.handlers[alias]
 }
 
+func (this *TestTopology) TrHandlerByVnetNum(vnetNum, vnicNum int) *TestServicePointTransactionHandler {
+	this.mtx.RLock()
+	defer this.mtx.RUnlock()
+	vnetPort := int(this.vnetsOrder[vnetNum-1].Resources().SysConfig().VnetPort)
+	alias := AliasOf(vnetPort, vnicNum)
+	return this.trHandlers[alias]
+}
+
 func (this *TestTopology) Shutdown() {
 	for _, _vnic := range this.vnics {
 		_vnic.Shutdown()
