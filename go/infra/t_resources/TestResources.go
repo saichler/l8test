@@ -25,6 +25,7 @@ var Log = logger.NewLoggerDirectImpl(&logger.FmtLogMethod{})
 func CreateResources(vnetPort, vnicNum int) (common.IResources, string) {
 	alias := AliasOf(vnetPort, vnicNum)
 	_log := logger.NewLoggerDirectImpl(&logger.FmtLogMethod{})
+	_log.SetLogLevel(common.Info_Level)
 	_registry := registry.NewRegistry()
 	_security, err := common.LoadSecurityProvider("security.so", "../../../../")
 	if err != nil {
