@@ -130,7 +130,7 @@ type TestServicePointTransactionHandler struct {
 }
 
 func (this *TestServicePointTransactionHandler) Replication() bool {
-	return true
+	return false
 }
 func (this *TestServicePointTransactionHandler) ReplicationCount() int {
 	return this.replicationCount
