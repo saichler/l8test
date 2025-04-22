@@ -45,10 +45,6 @@ func (this *TestServicePointBase) FailedN() int {
 	return int(this.failedNumber.Load())
 }
 
-func (this *TestServicePointTransactionHandler) SetReplication(r bool) {
-	this.replication = r
-}
-
-func (this *TestServicePointTransactionHandler) SetReplicationCount(i int) {
+func (this *TestServicePointReplicationHandler) SetReplicationCount(i int) {
 	this.replicationCount = i
 }

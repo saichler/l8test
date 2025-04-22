@@ -21,9 +21,10 @@ type TestServicePointBase struct {
 }
 
 const (
-	ServiceName        = "Tests"
-	ServicePointType   = "TestServicePointHandler"
-	ServicePointTrType = "TestServicePointTransactionHandler"
+	ServiceName         = "Tests"
+	ServicePointType    = "TestServicePointHandler"
+	ServicePointTrType  = "TestServicePointTransactionHandler"
+	ServicePointRepType = "TestServicePointReplicationHandler"
 )
 
 func (this *TestServicePointBase) Activate(serviceName string, serviceArea uint16,
@@ -126,17 +127,31 @@ func (this *TestServicePointHandler) TransactionMethod() common.ITransactionMeth
 
 type TestServicePointTransactionHandler struct {
 	TestServicePointBase
-	replication      bool
-	replicationCount int
-}
-
-func (this *TestServicePointTransactionHandler) Replication() bool {
-	return this.replication
-}
-func (this *TestServicePointTransactionHandler) ReplicationCount() int {
-	return this.replicationCount
 }
 
 func (this *TestServicePointTransactionHandler) TransactionMethod() common.ITransactionMethod {
 	return this
+}
+
+func (this *TestServicePointTransactionHandler) Replication() bool {
+	return false
+}
+func (this *TestServicePointTransactionHandler) ReplicationCount() int {
+	return 0
+}
+
+type TestServicePointReplicationHandler struct {
+	TestServicePointBase
+	replicationCount int
+}
+
+func (this *TestServicePointReplicationHandler) TransactionMethod() common.ITransactionMethod {
+	return this
+}
+
+func (this *TestServicePointReplicationHandler) Replication() bool {
+	return true
+}
+func (this *TestServicePointReplicationHandler) ReplicationCount() int {
+	return this.replicationCount
 }

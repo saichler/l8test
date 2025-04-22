@@ -11,12 +11,13 @@ import (
 )
 
 type TestTopology struct {
-	vnets      map[string]*VNet
-	vnetsOrder []*VNet
-	vnics      map[string]IVirtualNetworkInterface
-	handlers   map[string]*TestServicePointHandler
-	trHandlers map[string]*TestServicePointTransactionHandler
-	mtx        *sync.RWMutex
+	vnets       map[string]*VNet
+	vnetsOrder  []*VNet
+	vnics       map[string]IVirtualNetworkInterface
+	handlers    map[string]*TestServicePointHandler
+	trHandlers  map[string]*TestServicePointTransactionHandler
+	repHandlers map[string]*TestServicePointReplicationHandler
+	mtx         *sync.RWMutex
 }
 
 func NewTestTopology(vnicCountPervNet int, vnetPorts ...int) *TestTopology {
@@ -25,6 +26,7 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts ...int) *TestTopology {
 	this.vnics = make(map[string]IVirtualNetworkInterface)
 	this.handlers = make(map[string]*TestServicePointHandler)
 	this.trHandlers = make(map[string]*TestServicePointTransactionHandler)
+	this.repHandlers = make(map[string]*TestServicePointReplicationHandler)
 	this.vnetsOrder = make([]*VNet, 0)
 	this.mtx = &sync.RWMutex{}
 
@@ -38,13 +40,14 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts ...int) *TestTopology {
 	for _, vNetPort := range vnetPorts {
 		for i := 0; i < vnicCountPervNet; i++ {
 			if i == vnicCountPervNet-1 {
-				_vnic, _, _ := createVnic(vNetPort, i+1, -1)
+				_vnic, _, _, _ := createVnic(vNetPort, i+1, -1)
 				this.vnics[_vnic.Resources().SysConfig().LocalAlias] = _vnic
 			} else {
-				_vnic, handler, trHandler := createVnic(vNetPort, i+1, 0)
+				_vnic, handler, trHandler, repHandler := createVnic(vNetPort, i+1, 0)
 				this.vnics[_vnic.Resources().SysConfig().LocalAlias] = _vnic
 				this.handlers[_vnic.Resources().SysConfig().LocalAlias] = handler
 				this.trHandlers[_vnic.Resources().SysConfig().LocalAlias] = trHandler
+				this.repHandlers[_vnic.Resources().SysConfig().LocalAlias] = repHandler
 			}
 			Sleep()
 		}
@@ -108,6 +111,14 @@ func (this *TestTopology) TrHandlerByVnetNum(vnetNum, vnicNum int) *TestServiceP
 	return this.trHandlers[alias]
 }
 
+func (this *TestTopology) RepHandlerByVnetNum(vnetNum, vnicNum int) *TestServicePointReplicationHandler {
+	this.mtx.RLock()
+	defer this.mtx.RUnlock()
+	vnetPort := int(this.vnetsOrder[vnetNum-1].Resources().SysConfig().VnetPort)
+	alias := AliasOf(vnetPort, vnicNum)
+	return this.repHandlers[alias]
+}
+
 func (this *TestTopology) Shutdown() {
 	for _, _vnic := range this.vnics {
 		_vnic.Shutdown()
@@ -123,7 +134,10 @@ func (this *TestTopology) ResetHandlers() {
 	}
 	for _, _handler := range this.trHandlers {
 		_handler.Reset()
-		_handler.SetReplication(false)
+	}
+	for _, _handler := range this.repHandlers {
+		_handler.Reset()
+		_handler.SetReplicationCount(0)
 	}
 }
 
@@ -142,6 +156,16 @@ func (this *TestTopology) AllTrHandlers() []*TestServicePointTransactionHandler 
 	defer this.mtx.RUnlock()
 	result := make([]*TestServicePointTransactionHandler, 0)
 	for _, h := range this.trHandlers {
+		result = append(result, h)
+	}
+	return result
+}
+
+func (this *TestTopology) AllRepHandlers() []*TestServicePointReplicationHandler {
+	this.mtx.RLock()
+	defer this.mtx.RUnlock()
+	result := make([]*TestServicePointReplicationHandler, 0)
+	for _, h := range this.repHandlers {
 		result = append(result, h)
 	}
 	return result

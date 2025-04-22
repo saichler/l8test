@@ -17,15 +17,17 @@ func createVnet(vnetPort int) *vnet.VNet {
 	return _vnet
 }
 
-func createVnic(vnetPort int, vnicNum int, serviceArea int32) (common.IVirtualNetworkInterface, *t_servicepoints.TestServicePointHandler, *t_servicepoints.TestServicePointTransactionHandler) {
+func createVnic(vnetPort int, vnicNum int, serviceArea int32) (common.IVirtualNetworkInterface, *t_servicepoints.TestServicePointHandler, *t_servicepoints.TestServicePointTransactionHandler, *t_servicepoints.TestServicePointReplicationHandler) {
 	_resources, alias := t_resources.CreateResources(vnetPort, vnicNum)
 	var handler *t_servicepoints.TestServicePointHandler
 	var handlerTr *t_servicepoints.TestServicePointTransactionHandler
+	var handlerRep *t_servicepoints.TestServicePointReplicationHandler
 
 	if serviceArea != -1 {
 		_resources.Registry().Register(&testtypes.TestProto{})
 		_resources.ServicePoints().AddServicePointType(&t_servicepoints.TestServicePointHandler{})
 		_resources.ServicePoints().AddServicePointType(&t_servicepoints.TestServicePointTransactionHandler{})
+		_resources.ServicePoints().AddServicePointType(&t_servicepoints.TestServicePointReplicationHandler{})
 
 		h, err := _resources.ServicePoints().Activate(t_servicepoints.ServicePointType, t_servicepoints.ServiceName, 0, _resources, nil, alias)
 		if err != nil {
@@ -38,11 +40,17 @@ func createVnic(vnetPort int, vnicNum int, serviceArea int32) (common.IVirtualNe
 			panic(err)
 		}
 		handlerTr = hTr.(*t_servicepoints.TestServicePointTransactionHandler)
+
+		hRep, err := _resources.ServicePoints().Activate(t_servicepoints.ServicePointRepType, t_servicepoints.ServiceName, 2, _resources, nil, alias)
+		if err != nil {
+			panic(err)
+		}
+		handlerRep = hRep.(*t_servicepoints.TestServicePointReplicationHandler)
 	}
 	_vnic := vnic.NewVirtualNetworkInterface(_resources, nil)
 	_vnic.Resources().SysConfig().KeepAliveIntervalSeconds = 30
 	_vnic.Start()
-	return _vnic, handler, handlerTr
+	return _vnic, handler, handlerTr, handlerRep
 }
 
 func connectVnets(vnet1, vnet2 *vnet.VNet) {
