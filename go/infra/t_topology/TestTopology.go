@@ -123,6 +123,7 @@ func (this *TestTopology) ResetHandlers() {
 	}
 	for _, _handler := range this.trHandlers {
 		_handler.Reset()
+		_handler.SetReplication(false)
 	}
 }
 

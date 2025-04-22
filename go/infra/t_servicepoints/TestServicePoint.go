@@ -126,11 +126,12 @@ func (this *TestServicePointHandler) TransactionMethod() common.ITransactionMeth
 
 type TestServicePointTransactionHandler struct {
 	TestServicePointBase
+	replication      bool
 	replicationCount int
 }
 
 func (this *TestServicePointTransactionHandler) Replication() bool {
-	return false
+	return this.replication
 }
 func (this *TestServicePointTransactionHandler) ReplicationCount() int {
 	return this.replicationCount
