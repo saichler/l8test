@@ -117,12 +117,17 @@ func (this *TestServicePointHandler) ServiceName() string {
 func (this *TestServicePointHandler) ServiceModel() common.IElements {
 	return New(nil, &testtypes.TestProto{})
 }
-func (this *TestServicePointHandler) Transactional() bool {
+
+func (this *TestServicePointHandler) TransactionMethod() common.ITransactionMethod {
+	if this.tr {
+		return this
+	}
+	return nil
+}
+
+func (this *TestServicePointHandler) Replication() bool {
 	return this.tr
 }
 func (this *TestServicePointHandler) ReplicationCount() int {
 	return this.replicationCount
-}
-func (this *TestServicePointHandler) ReplicationScore() int {
-	return this.replicationScore
 }
