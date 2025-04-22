@@ -46,6 +46,7 @@ func createVnic(vnetPort int, vnicNum int, serviceArea int32) (common.IVirtualNe
 	_vnic.Start()
 
 	if serviceArea != -1 {
+		_vnic.WaitForConnection()
 		hRep, err := _resources.ServicePoints().Activate(t_servicepoints.ServicePointRepType, t_servicepoints.ServiceName, 2, _resources, _vnic, alias)
 		if err != nil {
 			panic(err)
