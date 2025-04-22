@@ -10,22 +10,20 @@ import (
 )
 
 type TestServicePointHandler struct {
-	name             string
-	postNumber       atomic.Int32
-	putNumber        atomic.Int32
-	patchNumber      atomic.Int32
-	deleteNumber     atomic.Int32
-	getNumber        atomic.Int32
-	failedNumber     atomic.Int32
-	tr               bool
-	errorMode        bool
-	replicationCount int
-	replicationScore int
+	name         string
+	postNumber   atomic.Int32
+	putNumber    atomic.Int32
+	patchNumber  atomic.Int32
+	deleteNumber atomic.Int32
+	getNumber    atomic.Int32
+	failedNumber atomic.Int32
+	errorMode    bool
 }
 
 const (
-	ServiceName      = "Tests"
-	ServicePointType = "TestServicePointHandler"
+	ServiceName        = "Tests"
+	ServicePointType   = "TestServicePointHandler"
+	ServicePointTrType = "TestServicePointTransactionHandler"
 )
 
 func (this *TestServicePointHandler) Activate(serviceName string, serviceArea uint16,
@@ -119,15 +117,17 @@ func (this *TestServicePointHandler) ServiceModel() common.IElements {
 }
 
 func (this *TestServicePointHandler) TransactionMethod() common.ITransactionMethod {
-	if this.tr {
-		return this
-	}
 	return nil
 }
 
-func (this *TestServicePointHandler) Replication() bool {
-	return this.tr
+type TestServicePointTransactionHandler struct {
+	TestServicePointHandler
+	replicationCount int
 }
-func (this *TestServicePointHandler) ReplicationCount() int {
+
+func (this *TestServicePointTransactionHandler) Replication() bool {
+	return true
+}
+func (this *TestServicePointTransactionHandler) ReplicationCount() int {
 	return this.replicationCount
 }

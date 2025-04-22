@@ -17,22 +17,32 @@ func createVnet(vnetPort int) *vnet.VNet {
 	return _vnet
 }
 
-func createVnic(vnetPort int, vnicNum int, serviceArea int32) (common.IVirtualNetworkInterface, *t_servicepoints.TestServicePointHandler) {
+func createVnic(vnetPort int, vnicNum int, serviceArea int32) (common.IVirtualNetworkInterface, *t_servicepoints.TestServicePointHandler, *t_servicepoints.TestServicePointTransactionHandler) {
 	_resources, alias := t_resources.CreateResources(vnetPort, vnicNum)
 	var handler *t_servicepoints.TestServicePointHandler
+	var handlerTr *t_servicepoints.TestServicePointTransactionHandler
+
 	if serviceArea != -1 {
 		_resources.Registry().Register(&testtypes.TestProto{})
 		_resources.ServicePoints().AddServicePointType(&t_servicepoints.TestServicePointHandler{})
+		_resources.ServicePoints().AddServicePointType(&t_servicepoints.TestServicePointTransactionHandler{})
+
 		h, err := _resources.ServicePoints().Activate(t_servicepoints.ServicePointType, t_servicepoints.ServiceName, 0, _resources, nil, alias)
 		if err != nil {
 			panic(err)
 		}
 		handler = h.(*t_servicepoints.TestServicePointHandler)
+
+		hTr, err := _resources.ServicePoints().Activate(t_servicepoints.ServicePointTrType, t_servicepoints.ServiceName, 1, _resources, nil, alias)
+		if err != nil {
+			panic(err)
+		}
+		handlerTr = hTr.(*t_servicepoints.TestServicePointTransactionHandler)
 	}
 	_vnic := vnic.NewVirtualNetworkInterface(_resources, nil)
 	_vnic.Resources().SysConfig().KeepAliveIntervalSeconds = 30
 	_vnic.Start()
-	return _vnic, handler
+	return _vnic, handler, handlerTr
 }
 
 func connectVnets(vnet1, vnet2 *vnet.VNet) {

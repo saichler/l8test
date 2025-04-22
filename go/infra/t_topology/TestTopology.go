@@ -15,6 +15,7 @@ type TestTopology struct {
 	vnetsOrder []*VNet
 	vnics      map[string]IVirtualNetworkInterface
 	handlers   map[string]*TestServicePointHandler
+	trHandlers map[string]*TestServicePointTransactionHandler
 	mtx        *sync.RWMutex
 }
 
@@ -23,6 +24,7 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts ...int) *TestTopology {
 	this.vnets = make(map[string]*VNet)
 	this.vnics = make(map[string]IVirtualNetworkInterface)
 	this.handlers = make(map[string]*TestServicePointHandler)
+	this.trHandlers = make(map[string]*TestServicePointTransactionHandler)
 	this.vnetsOrder = make([]*VNet, 0)
 	this.mtx = &sync.RWMutex{}
 
@@ -36,12 +38,13 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts ...int) *TestTopology {
 	for _, vNetPort := range vnetPorts {
 		for i := 0; i < vnicCountPervNet; i++ {
 			if i == vnicCountPervNet-1 {
-				_vnic, _ := createVnic(vNetPort, i+1, -1)
+				_vnic, _, _ := createVnic(vNetPort, i+1, -1)
 				this.vnics[_vnic.Resources().SysConfig().LocalAlias] = _vnic
 			} else {
-				_vnic, handler := createVnic(vNetPort, i+1, 0)
+				_vnic, handler, trHandler := createVnic(vNetPort, i+1, 0)
 				this.vnics[_vnic.Resources().SysConfig().LocalAlias] = _vnic
 				this.handlers[_vnic.Resources().SysConfig().LocalAlias] = handler
+				this.trHandlers[_vnic.Resources().SysConfig().LocalAlias] = trHandler
 			}
 			Sleep()
 		}
@@ -117,6 +120,16 @@ func (this *TestTopology) AllHandlers() []*TestServicePointHandler {
 	defer this.mtx.RUnlock()
 	result := make([]*TestServicePointHandler, 0)
 	for _, h := range this.handlers {
+		result = append(result, h)
+	}
+	return result
+}
+
+func (this *TestTopology) AllTrHandlers() []*TestServicePointTransactionHandler {
+	this.mtx.RLock()
+	defer this.mtx.RUnlock()
+	result := make([]*TestServicePointTransactionHandler, 0)
+	for _, h := range this.trHandlers {
 		result = append(result, h)
 	}
 	return result

@@ -6,22 +6,11 @@ func (this *TestServicePointHandler) Reset() {
 	this.patchNumber.Add(this.patchNumber.Load() * -1)
 	this.getNumber.Add(this.getNumber.Load() * -1)
 	this.deleteNumber.Add(this.deleteNumber.Load() * -1)
-	this.tr = false
 	this.errorMode = false
-	this.replicationCount = 0
-	this.replicationScore = 0
 }
 
 func (this *TestServicePointHandler) Name() string {
 	return this.name
-}
-
-func (this *TestServicePointHandler) Tr() bool {
-	return this.tr
-}
-
-func (this *TestServicePointHandler) SetTr(b bool) {
-	this.tr = b
 }
 
 func (this *TestServicePointHandler) ErrorMode() bool {
@@ -56,10 +45,6 @@ func (this *TestServicePointHandler) FailedN() int {
 	return int(this.failedNumber.Load())
 }
 
-func (this *TestServicePointHandler) SetReplicationCount(i int) {
+func (this *TestServicePointTransactionHandler) SetReplicationCount(i int) {
 	this.replicationCount = i
-}
-
-func (this *TestServicePointHandler) SetReplicationScore(i int) {
-	this.replicationScore = i
 }
