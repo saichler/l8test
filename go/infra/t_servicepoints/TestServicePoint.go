@@ -139,6 +139,9 @@ func (this *TestServicePointTransactionHandler) Replication() bool {
 func (this *TestServicePointTransactionHandler) ReplicationCount() int {
 	return 0
 }
+func (this *TestServicePointTransactionHandler) KeyOf(elements common.IElements) string {
+	return ""
+}
 
 type TestServicePointReplicationHandler struct {
 	TestServicePointBase
@@ -154,4 +157,8 @@ func (this *TestServicePointReplicationHandler) Replication() bool {
 }
 func (this *TestServicePointReplicationHandler) ReplicationCount() int {
 	return this.replicationCount
+}
+func (this *TestServicePointReplicationHandler) KeyOf(elements common.IElements) string {
+	pb := elements.Element().(*testtypes.TestProto)
+	return pb.MyString
 }
