@@ -137,7 +137,6 @@ func (this *TestTopology) ResetHandlers() {
 	}
 	for _, _handler := range this.repHandlers {
 		_handler.Reset()
-		_handler.SetReplicationCount(0)
 	}
 }
 

@@ -145,7 +145,6 @@ func (this *TestServicePointTransactionHandler) KeyOf(elements common.IElements)
 
 type TestServicePointReplicationHandler struct {
 	TestServicePointBase
-	replicationCount int
 }
 
 func (this *TestServicePointReplicationHandler) TransactionMethod() common.ITransactionMethod {
@@ -156,7 +155,7 @@ func (this *TestServicePointReplicationHandler) Replication() bool {
 	return true
 }
 func (this *TestServicePointReplicationHandler) ReplicationCount() int {
-	return this.replicationCount
+	return 3
 }
 func (this *TestServicePointReplicationHandler) KeyOf(elements common.IElements) string {
 	pb := elements.Element().(*testtypes.TestProto)

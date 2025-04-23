@@ -44,7 +44,3 @@ func (this *TestServicePointBase) DeleteN() int {
 func (this *TestServicePointBase) FailedN() int {
 	return int(this.failedNumber.Load())
 }
-
-func (this *TestServicePointReplicationHandler) SetReplicationCount(i int) {
-	this.replicationCount = i
-}
