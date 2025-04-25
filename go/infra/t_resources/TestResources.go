@@ -76,7 +76,18 @@ func CreateTestModelInstance(index int) *testtypes.TestProto {
 	sub2.MySubs["sub2"] = &testtypes.TestProtoSubSub{MyString: "sub2-string-sub", Int32Map: make(map[int32]int32)}
 	sub2.MySubs["sub2"].Int32Map[0] = 0
 	sub2.MySubs["sub2"].Int32Map[1] = 1
-	sub2.MySubs["sub2"].Int32Map[2] = 2
+
+	sub3 := &testtypes.TestProtoSub{
+		MyString: "string-sub-3-" + tag,
+		MyInt64:  time.Now().Unix(),
+		MySubs:   make(map[string]*testtypes.TestProtoSubSub),
+	}
+	sub3.MySubs["sub3"] = &testtypes.TestProtoSubSub{MyString: "sub3-string-sub", Int32Map: make(map[int32]int32)}
+	sub3.MySubs["sub3"].Int32Map[0] = 0
+	sub3.MySubs["sub3"].Int32Map[1] = 1
+	sub3.MySubs["sub3"].Int32Map[2] = 2
+	sub3.MySubs["sub3"].Int32Map[3] = 3
+
 	i := &testtypes.TestProto{
 		MyString:           "string-" + tag,
 		MyFloat64:          123456.123456,
@@ -90,7 +101,7 @@ func CreateTestModelInstance(index int) *testtypes.TestProto {
 		MyString2StringMap: map[string]string{"a": "aa", "b": "bb", "c": "cc", tag: tag + tag},
 		MySingle:           sub,
 		MyModelSlice:       []*testtypes.TestProtoSub{sub1, sub2},
-		MyString2ModelMap:  map[string]*testtypes.TestProtoSub{sub1.MyString: sub1, sub2.MyString: sub2},
+		MyString2ModelMap:  map[string]*testtypes.TestProtoSub{sub1.MyString: sub1, sub2.MyString: sub2, sub3.MyString: sub3},
 		MyEnum:             testtypes.TestEnum_ValueOne,
 	}
 	return i
