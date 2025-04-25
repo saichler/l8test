@@ -75,7 +75,8 @@ func CreateTestModelInstance(index int) *testtypes.TestProto {
 	}
 	sub2.MySubs["sub2"] = &testtypes.TestProtoSubSub{MyString: "sub2-string-sub", Int32Map: make(map[int32]int32)}
 	sub2.MySubs["sub2"].Int32Map[0] = 0
-	sub2.MySubs["sub2"].Int32Map[1] = 0
+	sub2.MySubs["sub2"].Int32Map[1] = 1
+	sub2.MySubs["sub2"].Int32Map[2] = 2
 	i := &testtypes.TestProto{
 		MyString:           "string-" + tag,
 		MyFloat64:          123456.123456,
