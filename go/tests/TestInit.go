@@ -3,10 +3,12 @@ package tests
 import (
 	. "github.com/saichler/l8test/go/infra/t_resources"
 	. "github.com/saichler/l8test/go/infra/t_topology"
+	"github.com/saichler/shared/go/share/logger"
 	. "github.com/saichler/types/go/common"
 )
 
 var topo *TestTopology
+var FLog = logger.NewLoggerDirectImpl(logger.NewFileLogMethod("test.log"))
 
 func init() {
 	Log.SetLogLevel(Trace_Level)
