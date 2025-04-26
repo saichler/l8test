@@ -1,9 +1,12 @@
 package tests
 
 import (
+	"fmt"
 	"github.com/saichler/l8test/go/infra/t_resources"
 	"github.com/saichler/layer8/go/overlay/health"
+	"github.com/saichler/layer8/go/overlay/protocol"
 	"testing"
+	"time"
 )
 
 func TestMain(m *testing.M) {
@@ -25,4 +28,6 @@ func TestServicePointValid(t *testing.T) {
 			}
 		}
 	}
+	time.Sleep(time.Second * 10)
+	fmt.Println("Messages created:", protocol.MessagesCreated())
 }

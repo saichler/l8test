@@ -20,7 +20,7 @@ type TestTopology struct {
 	mtx         *sync.RWMutex
 }
 
-func NewTestTopology(vnicCountPervNet int, vnetPorts ...int) *TestTopology {
+func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *TestTopology {
 	this := &TestTopology{}
 	this.vnets = make(map[string]*VNet)
 	this.vnics = make(map[string]IVirtualNetworkInterface)
@@ -31,7 +31,7 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts ...int) *TestTopology {
 	this.mtx = &sync.RWMutex{}
 
 	for _, vNetPort := range vnetPorts {
-		_vnet := createVnet(vNetPort)
+		_vnet := createVnet(vNetPort, level)
 		this.vnets[_vnet.Resources().SysConfig().LocalAlias] = _vnet
 		this.vnetsOrder = append(this.vnetsOrder, _vnet)
 	}
@@ -40,10 +40,10 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts ...int) *TestTopology {
 	for _, vNetPort := range vnetPorts {
 		for i := 0; i < vnicCountPervNet; i++ {
 			if i == vnicCountPervNet-1 {
-				_vnic, _, _, _ := createVnic(vNetPort, i+1, -1)
+				_vnic, _, _, _ := createVnic(vNetPort, i+1, -1, level)
 				this.vnics[_vnic.Resources().SysConfig().LocalAlias] = _vnic
 			} else {
-				_vnic, handler, trHandler, repHandler := createVnic(vNetPort, i+1, 0)
+				_vnic, handler, trHandler, repHandler := createVnic(vNetPort, i+1, 0, level)
 				this.vnics[_vnic.Resources().SysConfig().LocalAlias] = _vnic
 				this.handlers[_vnic.Resources().SysConfig().LocalAlias] = handler
 				this.trHandlers[_vnic.Resources().SysConfig().LocalAlias] = trHandler

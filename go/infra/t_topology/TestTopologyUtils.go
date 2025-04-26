@@ -10,15 +10,15 @@ import (
 	"time"
 )
 
-func createVnet(vnetPort int) *vnet.VNet {
-	_resources, _ := t_resources.CreateResources(vnetPort, -1)
+func createVnet(vnetPort int, level common.LogLevel) *vnet.VNet {
+	_resources, _ := t_resources.CreateResources(vnetPort, -1, level)
 	_vnet := vnet.NewVNet(_resources)
 	_vnet.Start()
 	return _vnet
 }
 
-func createVnic(vnetPort int, vnicNum int, serviceArea int32) (common.IVirtualNetworkInterface, *t_servicepoints.TestServicePointHandler, *t_servicepoints.TestServicePointTransactionHandler, *t_servicepoints.TestServicePointReplicationHandler) {
-	_resources, alias := t_resources.CreateResources(vnetPort, vnicNum)
+func createVnic(vnetPort int, vnicNum int, serviceArea int32, level common.LogLevel) (common.IVirtualNetworkInterface, *t_servicepoints.TestServicePointHandler, *t_servicepoints.TestServicePointTransactionHandler, *t_servicepoints.TestServicePointReplicationHandler) {
+	_resources, alias := t_resources.CreateResources(vnetPort, vnicNum, level)
 	var handler *t_servicepoints.TestServicePointHandler
 	var handlerTr *t_servicepoints.TestServicePointTransactionHandler
 	var handlerRep *t_servicepoints.TestServicePointReplicationHandler
