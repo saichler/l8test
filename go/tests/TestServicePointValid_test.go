@@ -29,5 +29,7 @@ func TestServicePointValid(t *testing.T) {
 		}
 	}
 	time.Sleep(time.Second * 10)
-	fmt.Println("Messages created:", protocol.MessagesCreated())
+	fmt.Println("Messages created before:", protocol.MessagesCreated())
+	time.Sleep(time.Second * 10)
+	fmt.Println("Messages created after:", protocol.MessagesCreated())
 }
