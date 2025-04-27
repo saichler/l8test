@@ -139,7 +139,7 @@ func (this *TestServicePointTransactionHandler) Replication() bool {
 func (this *TestServicePointTransactionHandler) ReplicationCount() int {
 	return 0
 }
-func (this *TestServicePointTransactionHandler) KeyOf(elements common.IElements) string {
+func (this *TestServicePointTransactionHandler) KeyOf(elements common.IElements, resources common.IResources) string {
 	return ""
 }
 
