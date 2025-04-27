@@ -157,7 +157,7 @@ func (this *TestServicePointReplicationHandler) Replication() bool {
 func (this *TestServicePointReplicationHandler) ReplicationCount() int {
 	return 2
 }
-func (this *TestServicePointReplicationHandler) KeyOf(elements common.IElements) string {
+func (this *TestServicePointReplicationHandler) KeyOf(elements common.IElements, resources common.IResources) string {
 	pb := elements.Element().(*testtypes.TestProto)
 	return pb.MyString
 }
