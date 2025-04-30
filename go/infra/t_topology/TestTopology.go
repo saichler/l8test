@@ -38,8 +38,15 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 		this.vnetsOrder = append(this.vnetsOrder, _vnet)
 	}
 
-	Sleep()
-	Sleep()
+	for i := 0; i < len(this.vnetsOrder)-1; i++ {
+		for j := i + 1; j < len(this.vnetsOrder); j++ {
+			connectVnets(this.vnetsOrder[i], this.vnetsOrder[j])
+		}
+	}
+
+	if !WaitForCondition(this.areVnetsConnected, 2, nil, "Vnets are not ready and connected") {
+		panic("Vnets are not ready and connects ")
+	}
 
 	for _, vNetPort := range vnetPorts {
 		for i := 0; i < vnicCountPervNet; i++ {
@@ -56,19 +63,7 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 		}
 	}
 
-	if !WaitForCondition(this.areVnetsReady1, 2, nil, "Vnet are not ready 1") {
-		panic("Vnet are not ready 1")
-	}
-
-	for i := 0; i < len(this.vnetsOrder)-1; i++ {
-		for j := i + 1; j < len(this.vnetsOrder); j++ {
-			connectVnets(this.vnetsOrder[i], this.vnetsOrder[j])
-			Sleep()
-			Sleep()
-		}
-	}
-
-	if !WaitForCondition(this.areVnetsReady2, 3, nil, "Vnet are not ready 2") {
+	if !WaitForCondition(this.areVnetsHaveAllVnics, 3, nil, "Vnet are not ready 2") {
 		for _, vnet := range this.vnets {
 			hc := health.Health(vnet.Resources())
 			fmt.Println(vnet.Resources().SysConfig().LocalAlias, " ", vnet.ExternalCount(), vnet.LocalCount(), len(hc.All()))
@@ -76,7 +71,7 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 		panic("Vnet are not ready 2")
 	}
 
-	if !WaitForCondition(this.areVnicReady, 2, nil, "Vnics are not ready!") {
+	if !WaitForCondition(this.areVnicsReady, 3, nil, "Vnics are not ready!") {
 		nic := this.VnicByVnetNum(1, 1)
 		hc := health.Health(nic.Resources())
 		all := hc.All()
@@ -88,7 +83,7 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 	return this
 }
 
-func (this *TestTopology) areVnicReady() bool {
+func (this *TestTopology) areVnicsReady() bool {
 	for vnetNum := 1; vnetNum <= 3; vnetNum++ {
 		for vnicNum := 1; vnicNum <= 4; vnicNum++ {
 			nic := this.VnicByVnetNum(vnetNum, vnicNum)
@@ -102,18 +97,16 @@ func (this *TestTopology) areVnicReady() bool {
 	return true
 }
 
-func (this *TestTopology) areVnetsReady1() bool {
+func (this *TestTopology) areVnetsConnected() bool {
 	for _, vnet := range this.vnets {
-		hc := health.Health(vnet.Resources())
-		all := hc.All()
-		if len(all) != 5 {
+		if vnet.ExternalCount() != 2 {
 			return false
 		}
 	}
 	return true
 }
 
-func (this *TestTopology) areVnetsReady2() bool {
+func (this *TestTopology) areVnetsHaveAllVnics() bool {
 	for _, vnet := range this.vnets {
 		if vnet.ExternalCount() != 2 {
 			return false
