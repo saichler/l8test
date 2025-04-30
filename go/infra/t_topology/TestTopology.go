@@ -1,13 +1,15 @@
 package t_topology
 
 import (
+	"fmt"
 	. "github.com/saichler/l8test/go/infra/t_resources"
 	. "github.com/saichler/l8test/go/infra/t_servicepoints"
+	"github.com/saichler/layer8/go/overlay/health"
 	. "github.com/saichler/layer8/go/overlay/vnet"
 	. "github.com/saichler/layer8/go/overlay/vnic"
 	. "github.com/saichler/types/go/common"
+	"strconv"
 	"sync"
-	"time"
 )
 
 type TestTopology struct {
@@ -35,6 +37,8 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 		this.vnets[_vnet.Resources().SysConfig().LocalAlias] = _vnet
 		this.vnetsOrder = append(this.vnetsOrder, _vnet)
 	}
+
+	Sleep()
 	Sleep()
 
 	for _, vNetPort := range vnetPorts {
@@ -49,12 +53,13 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 				this.trHandlers[_vnic.Resources().SysConfig().LocalAlias] = trHandler
 				this.repHandlers[_vnic.Resources().SysConfig().LocalAlias] = repHandler
 			}
-			Sleep()
 		}
 	}
 
-	Sleep()
-	Sleep()
+	if !WaitForCondition(this.areVnetsReady1, 2, nil, "Vnet are not ready 1") {
+		panic("Vnet are not ready 1")
+	}
+
 	for i := 0; i < len(this.vnetsOrder)-1; i++ {
 		for j := i + 1; j < len(this.vnetsOrder); j++ {
 			connectVnets(this.vnetsOrder[i], this.vnetsOrder[j])
@@ -62,8 +67,66 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 			Sleep()
 		}
 	}
-	time.Sleep(time.Second)
+
+	if !WaitForCondition(this.areVnetsReady2, 3, nil, "Vnet are not ready 2") {
+		for _, vnet := range this.vnets {
+			hc := health.Health(vnet.Resources())
+			fmt.Println(vnet.Resources().SysConfig().LocalAlias, " ", vnet.ExternalCount(), vnet.LocalCount(), len(hc.All()))
+		}
+		panic("Vnet are not ready 2")
+	}
+
+	if !WaitForCondition(this.areVnicReady, 2, nil, "Vnics are not ready!") {
+		nic := this.VnicByVnetNum(1, 1)
+		hc := health.Health(nic.Resources())
+		all := hc.All()
+		for _, hp := range all {
+			fmt.Println("Vnic 1 -> ", hp.Alias)
+		}
+		panic("Vnics are not ready, it has only " + strconv.Itoa(len(all)) + " instead of 15")
+	}
 	return this
+}
+
+func (this *TestTopology) areVnicReady() bool {
+	for vnetNum := 1; vnetNum <= 3; vnetNum++ {
+		for vnicNum := 1; vnicNum <= 4; vnicNum++ {
+			nic := this.VnicByVnetNum(vnetNum, vnicNum)
+			hc := health.Health(nic.Resources())
+			hp := hc.All()
+			if len(hp) != 15 {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func (this *TestTopology) areVnetsReady1() bool {
+	for _, vnet := range this.vnets {
+		hc := health.Health(vnet.Resources())
+		all := hc.All()
+		if len(all) != 5 {
+			return false
+		}
+	}
+	return true
+}
+
+func (this *TestTopology) areVnetsReady2() bool {
+	for _, vnet := range this.vnets {
+		if vnet.ExternalCount() != 2 {
+			return false
+		}
+		if vnet.LocalCount() != 4 {
+			return false
+		}
+		hc := health.Health(vnet.Resources())
+		if len(hc.All()) != 15 {
+			return false
+		}
+	}
+	return true
 }
 
 func (this *TestTopology) Vnet(vnetPort int) *VNet {

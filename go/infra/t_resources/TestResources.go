@@ -117,6 +117,10 @@ func WaitForCondition(cond func() bool, timeoutInSeconds int64, t *testing.T, fa
 		time.Sleep(time.Millisecond * 100)
 		start += 100
 	}
-	Log.Fail(t, failMessage)
+	if t != nil {
+		Log.Fail(t, failMessage)
+	} else {
+		Log.Error(failMessage)
+	}
 	return false
 }
