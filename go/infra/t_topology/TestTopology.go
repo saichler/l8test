@@ -72,13 +72,24 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 	}
 
 	if !WaitForCondition(this.areVnicsReady, 3, nil, "Vnics are not ready!") {
-		nic := this.VnicByVnetNum(1, 1)
-		hc := health.Health(nic.Resources())
-		all := hc.All()
-		for _, hp := range all {
-			fmt.Println("Vnic 1 -> ", hp.Alias)
+		vnicName := ""
+		vnicSum := 0
+		for vnetNum := 1; vnetNum <= 3; vnetNum++ {
+			for vnicNum := 1; vnicNum <= 4; vnicNum++ {
+				nic := this.VnicByVnetNum(vnetNum, vnicNum)
+				hc := health.Health(nic.Resources())
+				hp := hc.All()
+				if len(hp) != 15 {
+					vnicName = nic.Resources().SysConfig().LocalAlias
+					vnicSum = len(hp)
+					break
+				}
+			}
+			if vnicName != "" {
+				break
+			}
 		}
-		panic("Vnics are not ready, it has only " + strconv.Itoa(len(all)) + " instead of 15")
+		panic("Vnics are not ready, vnic " + vnicName + " has only " + strconv.Itoa(vnicSum) + " instead of 15")
 	}
 	return this
 }
