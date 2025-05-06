@@ -16,6 +16,9 @@ func TestMain(m *testing.M) {
 }
 
 func TestServicePointValid(t *testing.T) {
+
+	t_resources.CreateTestModelInstance(1)
+
 	for vnetNum := 1; vnetNum <= 3; vnetNum++ {
 		for vnicNum := 1; vnicNum <= 4; vnicNum++ {
 			nic := topo.VnicByVnetNum(vnetNum, vnicNum)

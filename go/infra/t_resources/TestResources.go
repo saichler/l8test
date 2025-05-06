@@ -53,56 +53,70 @@ func AliasOf(vnetPort, vnicNum int) string {
 	return alias.String()
 }
 
+func CreateSubSubModelInstance(index1, index2, index3, k int, v ...int32) *testtypes.TestProtoSubSub {
+	key := bytes.Buffer{}
+	key.WriteString("string-")
+	key.WriteString(strconv.Itoa(index1))
+	key.WriteString("-")
+	key.WriteString(strconv.Itoa(index2))
+	key.WriteString("-")
+	key.WriteString(strconv.Itoa(index3))
+	subsub := &testtypes.TestProtoSubSub{}
+
+	subsub.MyString = key.String()
+	subsub.MyInt64 = time.Now().UnixNano()
+	subsub.Int32Map = make(map[int32]int32)
+	for i := 0; i < k; i++ {
+		subsub.Int32Map[int32(i)] = v[i]
+	}
+	return subsub
+}
+
+func CreateSubTestModelInstance(index1, index2 int, n, k int, v ...int32) *testtypes.TestProtoSub {
+	key := bytes.Buffer{}
+	key.WriteString("string-")
+	key.WriteString(strconv.Itoa(index1))
+	key.WriteString("-")
+	key.WriteString(strconv.Itoa(index2))
+	sub := &testtypes.TestProtoSub{}
+	sub.MyString = key.String()
+	sub.MyInt64 = time.Now().UnixNano()
+	sub.MySubs = make(map[string]*testtypes.TestProtoSubSub)
+
+	for i := 0; i < n; i++ {
+		subsub := CreateSubSubModelInstance(index1, index2, i, k, v...)
+		sub.MySubs[subsub.MyString] = subsub
+	}
+
+	return sub
+}
+
 func CreateTestModelInstance(index int) *testtypes.TestProto {
-	tag := strconv.Itoa(index)
-	sub := &testtypes.TestProtoSub{
-		MyString: "string-sub-" + tag,
-		MyInt64:  time.Now().Unix(),
-		MySubs:   make(map[string]*testtypes.TestProtoSubSub),
-	}
-	sub.MySubs["sub"] = &testtypes.TestProtoSubSub{MyString: "sub", Int32Map: make(map[int32]int32)}
-	sub.MySubs["sub"].Int32Map[0] = 0
-	sub.MySubs["sub"].Int32Map[1] = 0
+	key := bytes.Buffer{}
+	key.WriteString("string-")
+	key.WriteString(strconv.Itoa(index))
 
-	sub1 := &testtypes.TestProtoSub{
-		MyString: "string-sub-1-" + tag,
-		MyInt64:  time.Now().Unix(),
-	}
-	sub2 := &testtypes.TestProtoSub{
-		MyString: "string-sub-2-" + tag,
-		MyInt64:  time.Now().Unix(),
-		MySubs:   make(map[string]*testtypes.TestProtoSubSub),
-	}
-	sub2.MySubs["sub2"] = &testtypes.TestProtoSubSub{MyString: "sub2-string-sub", Int32Map: make(map[int32]int32)}
-	sub2.MySubs["sub2"].Int32Map[0] = 0
-	sub2.MySubs["sub2"].Int32Map[1] = 1
-
-	sub3 := &testtypes.TestProtoSub{
-		MyString: "string-sub-3-" + tag,
-		MyInt64:  time.Now().Unix(),
-		MySubs:   make(map[string]*testtypes.TestProtoSubSub),
-	}
-	sub3.MySubs["sub3"] = &testtypes.TestProtoSubSub{MyString: "sub3-string-sub", Int32Map: make(map[int32]int32)}
-	sub3.MySubs["sub3"].Int32Map[0] = 0
-	sub3.MySubs["sub3"].Int32Map[1] = 1
-	sub3.MySubs["sub3"].Int32Map[2] = 2
-	sub3.MySubs["sub3"].Int32Map[3] = 3
+	sub1m := CreateSubTestModelInstance(index, 1, 2, 2, 0, 0)
+	sub2m := CreateSubTestModelInstance(index, 2, 2, 2, 0, 1)
+	sub3m := CreateSubTestModelInstance(index, 3, 2, 4, 0, 1, 2, 3)
 
 	i := &testtypes.TestProto{
-		MyString:           "string-" + tag,
+		MyString:           key.String(),
 		MyFloat64:          123456.123456,
 		MyBool:             true,
 		MyFloat32:          123.123,
 		MyInt32:            int32(index),
 		MyInt64:            int64(index * 10),
 		MyInt32Slice:       []int32{1, 2, 3, int32(index)},
-		MyStringSlice:      []string{"a", "b", "c", "d", tag},
+		MyStringSlice:      []string{"a", "b", "c", "d", key.String()},
 		MyInt32ToInt64Map:  map[int32]int64{1: 11, 2: 22, 3: 33, 4: 44, int32(index): int64(index * 10)},
-		MyString2StringMap: map[string]string{"a": "aa", "b": "bb", "c": "cc", tag: tag + tag},
-		MySingle:           sub,
-		MyModelSlice:       []*testtypes.TestProtoSub{sub1, sub2},
-		MyString2ModelMap:  map[string]*testtypes.TestProtoSub{sub1.MyString: sub1, sub2.MyString: sub2, sub3.MyString: sub3},
-		MyEnum:             testtypes.TestEnum_ValueOne,
+		MyString2StringMap: map[string]string{"a": "aa", "b": "bb", "c": "cc", key.String(): key.String() + key.String()},
+		MySingle:           CreateSubTestModelInstance(index, 0, 2, 2, 0, 0),
+		MyModelSlice: []*testtypes.TestProtoSub{CreateSubTestModelInstance(index, 1, 2, 2, 0, 0),
+			CreateSubTestModelInstance(index, 2, 2, 2, 0, 1)},
+		MyString2ModelMap: map[string]*testtypes.TestProtoSub{sub1m.MyString: sub1m,
+			sub2m.MyString: sub2m, sub3m.MyString: sub3m},
+		MyEnum: testtypes.TestEnum_ValueOne,
 	}
 	return i
 }
