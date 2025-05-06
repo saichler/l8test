@@ -71,7 +71,7 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 		panic("Vnet are not ready 2")
 	}
 
-	if !WaitForCondition(this.areVnicsReady, 3, nil, "Vnics are not ready!") {
+	if !WaitForCondition(this.areVnicsReady, 5, nil, "Vnics are not ready!") {
 		vnicName := ""
 		vnicSum := 0
 		for vnetNum := 1; vnetNum <= 3; vnetNum++ {

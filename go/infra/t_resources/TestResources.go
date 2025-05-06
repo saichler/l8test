@@ -27,7 +27,7 @@ func CreateResources(vnetPort, vnicNum int, level common.LogLevel) (common.IReso
 	_log := logger.NewLoggerDirectImpl(&logger.FmtLogMethod{})
 	_log.SetLogLevel(level)
 	_registry := registry.NewRegistry()
-	_security, err := common.LoadSecurityProvider("security.so", "../../../../")
+	_security, err := common.LoadSecurityProvider()
 	if err != nil {
 		panic("Failed to load security provider " + err.Error())
 	}

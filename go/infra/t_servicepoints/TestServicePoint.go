@@ -4,6 +4,7 @@ import (
 	"errors"
 	. "github.com/saichler/l8test/go/infra/t_resources"
 	. "github.com/saichler/serializer/go/serialize/object"
+	"github.com/saichler/servicepoints/go/points/dcache"
 	"github.com/saichler/types/go/common"
 	"github.com/saichler/types/go/testtypes"
 	"sync/atomic"
@@ -27,12 +28,24 @@ const (
 	ServicePointRepType = "TestServicePointReplicationHandler"
 )
 
-func (this *TestServicePointBase) Activate(serviceName string, serviceArea uint16,
+func (this *TestServicePointHandler) Activate(serviceName string, serviceArea uint16,
 	r common.IResources, l common.IServicePointCacheListener, args ...interface{}) error {
 	this.name = args[0].(string)
 	return nil
 }
 
+func (this *TestServicePointTransactionHandler) Activate(serviceName string, serviceArea uint16,
+	r common.IResources, l common.IServicePointCacheListener, args ...interface{}) error {
+	this.name = args[0].(string)
+	return nil
+}
+
+func (this *TestServicePointReplicationHandler) Activate(serviceName string, serviceArea uint16,
+	r common.IResources, l common.IServicePointCacheListener, args ...interface{}) error {
+	this.name = args[0].(string)
+	this.cache = dcache.NewDistributedCache(serviceName, serviceArea, "TestProto", r.SysConfig().LocalUuid, l, r)
+	return nil
+}
 func (this *TestServicePointBase) DeActivate() error {
 	return nil
 }
@@ -145,6 +158,7 @@ func (this *TestServicePointTransactionHandler) KeyOf(elements common.IElements,
 
 type TestServicePointReplicationHandler struct {
 	TestServicePointBase
+	cache common.IDistributedCache
 }
 
 func (this *TestServicePointReplicationHandler) TransactionMethod() common.ITransactionMethod {
