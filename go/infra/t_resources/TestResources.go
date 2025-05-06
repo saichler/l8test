@@ -2,6 +2,7 @@ package t_resources
 
 import (
 	"bytes"
+	"github.com/saichler/reflect/go/reflect/cloning"
 	"github.com/saichler/reflect/go/reflect/introspecting"
 	"github.com/saichler/servicepoints/go/points/service_points"
 	"github.com/saichler/shared/go/share/logger"
@@ -119,6 +120,11 @@ func CreateTestModelInstance(index int) *testtypes.TestProto {
 		MyEnum: testtypes.TestEnum_ValueOne,
 	}
 	return i
+}
+
+func CloneTestModel(a *testtypes.TestProto) *testtypes.TestProto {
+	cloner := cloning.NewCloner()
+	return cloner.Clone(a).(*testtypes.TestProto)
 }
 
 func WaitForCondition(cond func() bool, timeoutInSeconds int64, t *testing.T, failMessage string) bool {
