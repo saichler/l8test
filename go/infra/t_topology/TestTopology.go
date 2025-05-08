@@ -15,7 +15,7 @@ import (
 type TestTopology struct {
 	vnets       map[string]*VNet
 	vnetsOrder  []*VNet
-	vnics       map[string]IVirtualNetworkInterface
+	vnics       map[string]IVNic
 	handlers    map[string]*TestServicePointHandler
 	trHandlers  map[string]*TestServicePointTransactionHandler
 	repHandlers map[string]*TestServicePointReplicationHandler
@@ -25,7 +25,7 @@ type TestTopology struct {
 func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *TestTopology {
 	this := &TestTopology{}
 	this.vnets = make(map[string]*VNet)
-	this.vnics = make(map[string]IVirtualNetworkInterface)
+	this.vnics = make(map[string]IVNic)
 	this.handlers = make(map[string]*TestServicePointHandler)
 	this.trHandlers = make(map[string]*TestServicePointTransactionHandler)
 	this.repHandlers = make(map[string]*TestServicePointReplicationHandler)
@@ -140,14 +140,14 @@ func (this *TestTopology) Vnet(vnetPort int) *VNet {
 	return this.vnets[alias]
 }
 
-func (this *TestTopology) VnicByPort(vnetPort, vnicNum int) IVirtualNetworkInterface {
+func (this *TestTopology) VnicByPort(vnetPort, vnicNum int) IVNic {
 	this.mtx.RLock()
 	defer this.mtx.RUnlock()
 	alias := AliasOf(vnetPort, vnicNum)
 	return this.vnics[alias]
 }
 
-func (this *TestTopology) VnicByVnetNum(vnetNum, vnicNum int) IVirtualNetworkInterface {
+func (this *TestTopology) VnicByVnetNum(vnetNum, vnicNum int) IVNic {
 	this.mtx.RLock()
 	defer this.mtx.RUnlock()
 	vnetPort := int(this.vnetsOrder[vnetNum-1].Resources().SysConfig().VnetPort)
@@ -237,10 +237,10 @@ func (this *TestTopology) AllRepHandlers() []*TestServicePointReplicationHandler
 	return result
 }
 
-func (this *TestTopology) AllVnics() []IVirtualNetworkInterface {
+func (this *TestTopology) AllVnics() []IVNic {
 	this.mtx.RLock()
 	defer this.mtx.RUnlock()
-	result := make([]IVirtualNetworkInterface, 0)
+	result := make([]IVNic, 0)
 	for _, vnic := range this.vnics {
 		result = append(result, vnic)
 	}
@@ -276,8 +276,8 @@ func (this *TestTopology) SetLogLevel(lvl LogLevel) {
 	}
 }
 
-func (this *TestTopology) ReActivateTestService(nic IVirtualNetworkInterface) {
-	h, err := nic.Resources().ServicePoints().Activate(ServicePointType, ServiceName, 0, nic.Resources(), nil,
+func (this *TestTopology) ReActivateTestService(nic IVNic) {
+	h, err := nic.Resources().Services().Activate(ServicePointType, ServiceName, 0, nic.Resources(), nil,
 		nic.Resources().SysConfig().LocalAlias)
 	if err != nil {
 		panic(err)

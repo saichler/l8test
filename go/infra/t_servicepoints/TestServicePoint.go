@@ -29,19 +29,19 @@ const (
 )
 
 func (this *TestServicePointHandler) Activate(serviceName string, serviceArea uint16,
-	r ifs.IResources, l ifs.IServicePointCacheListener, args ...interface{}) error {
+	r ifs.IResources, l ifs.IServiceCacheListener, args ...interface{}) error {
 	this.name = args[0].(string)
 	return nil
 }
 
 func (this *TestServicePointTransactionHandler) Activate(serviceName string, serviceArea uint16,
-	r ifs.IResources, l ifs.IServicePointCacheListener, args ...interface{}) error {
+	r ifs.IResources, l ifs.IServiceCacheListener, args ...interface{}) error {
 	this.name = args[0].(string)
 	return nil
 }
 
 func (this *TestServicePointReplicationHandler) Activate(serviceName string, serviceArea uint16,
-	r ifs.IResources, l ifs.IServicePointCacheListener, args ...interface{}) error {
+	r ifs.IResources, l ifs.IServiceCacheListener, args ...interface{}) error {
 	this.name = args[0].(string)
 	this.cache = dcache.NewDistributedCache(serviceName, serviceArea, "TestProto", r.SysConfig().LocalUuid, l, r)
 	return nil

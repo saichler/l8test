@@ -17,7 +17,7 @@ func createVnet(vnetPort int, level ifs.LogLevel) *vnet.VNet {
 	return _vnet
 }
 
-func createVnic(vnetPort int, vnicNum int, serviceArea int32, level ifs.LogLevel) (ifs.IVirtualNetworkInterface, *t_servicepoints.TestServicePointHandler, *t_servicepoints.TestServicePointTransactionHandler, *t_servicepoints.TestServicePointReplicationHandler) {
+func createVnic(vnetPort int, vnicNum int, serviceArea int32, level ifs.LogLevel) (ifs.IVNic, *t_servicepoints.TestServicePointHandler, *t_servicepoints.TestServicePointTransactionHandler, *t_servicepoints.TestServicePointReplicationHandler) {
 	_resources, alias := t_resources.CreateResources(vnetPort, vnicNum, level)
 	var handler *t_servicepoints.TestServicePointHandler
 	var handlerTr *t_servicepoints.TestServicePointTransactionHandler
@@ -25,17 +25,17 @@ func createVnic(vnetPort int, vnicNum int, serviceArea int32, level ifs.LogLevel
 
 	if serviceArea != -1 {
 		_resources.Registry().Register(&testtypes.TestProto{})
-		_resources.ServicePoints().AddServicePointType(&t_servicepoints.TestServicePointHandler{})
-		_resources.ServicePoints().AddServicePointType(&t_servicepoints.TestServicePointTransactionHandler{})
-		_resources.ServicePoints().AddServicePointType(&t_servicepoints.TestServicePointReplicationHandler{})
+		_resources.Services().RegisterServiceHandlerType(&t_servicepoints.TestServicePointHandler{})
+		_resources.Services().RegisterServiceHandlerType(&t_servicepoints.TestServicePointTransactionHandler{})
+		_resources.Services().RegisterServiceHandlerType(&t_servicepoints.TestServicePointReplicationHandler{})
 
-		h, err := _resources.ServicePoints().Activate(t_servicepoints.ServicePointType, t_servicepoints.ServiceName, 0, _resources, nil, alias)
+		h, err := _resources.Services().Activate(t_servicepoints.ServicePointType, t_servicepoints.ServiceName, 0, _resources, nil, alias)
 		if err != nil {
 			panic(err)
 		}
 		handler = h.(*t_servicepoints.TestServicePointHandler)
 
-		hTr, err := _resources.ServicePoints().Activate(t_servicepoints.ServicePointTrType, t_servicepoints.ServiceName, 1, _resources, nil, alias)
+		hTr, err := _resources.Services().Activate(t_servicepoints.ServicePointTrType, t_servicepoints.ServiceName, 1, _resources, nil, alias)
 		if err != nil {
 			panic(err)
 		}
@@ -47,7 +47,7 @@ func createVnic(vnetPort int, vnicNum int, serviceArea int32, level ifs.LogLevel
 
 	if serviceArea != -1 {
 		_vnic.WaitForConnection()
-		hRep, err := _resources.ServicePoints().Activate(t_servicepoints.ServicePointRepType, t_servicepoints.ServiceName, 2, _resources, _vnic, alias)
+		hRep, err := _resources.Services().Activate(t_servicepoints.ServicePointRepType, t_servicepoints.ServiceName, 2, _resources, _vnic, alias)
 		if err != nil {
 			panic(err)
 		}
