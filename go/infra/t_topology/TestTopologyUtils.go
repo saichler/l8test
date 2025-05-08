@@ -5,19 +5,19 @@ import (
 	"github.com/saichler/l8test/go/infra/t_servicepoints"
 	"github.com/saichler/layer8/go/overlay/vnet"
 	"github.com/saichler/layer8/go/overlay/vnic"
-	"github.com/saichler/types/go/common"
-	"github.com/saichler/types/go/testtypes"
+	"github.com/saichler/l8types/go/ifs"
+	"github.com/saichler/l8types/go/testtypes"
 	"time"
 )
 
-func createVnet(vnetPort int, level common.LogLevel) *vnet.VNet {
+func createVnet(vnetPort int, level ifs.LogLevel) *vnet.VNet {
 	_resources, _ := t_resources.CreateResources(vnetPort, -1, level)
 	_vnet := vnet.NewVNet(_resources)
 	_vnet.Start()
 	return _vnet
 }
 
-func createVnic(vnetPort int, vnicNum int, serviceArea int32, level common.LogLevel) (common.IVirtualNetworkInterface, *t_servicepoints.TestServicePointHandler, *t_servicepoints.TestServicePointTransactionHandler, *t_servicepoints.TestServicePointReplicationHandler) {
+func createVnic(vnetPort int, vnicNum int, serviceArea int32, level ifs.LogLevel) (ifs.IVirtualNetworkInterface, *t_servicepoints.TestServicePointHandler, *t_servicepoints.TestServicePointTransactionHandler, *t_servicepoints.TestServicePointReplicationHandler) {
 	_resources, alias := t_resources.CreateResources(vnetPort, vnicNum, level)
 	var handler *t_servicepoints.TestServicePointHandler
 	var handlerTr *t_servicepoints.TestServicePointTransactionHandler

@@ -7,7 +7,7 @@ import (
 	"github.com/saichler/layer8/go/overlay/health"
 	. "github.com/saichler/layer8/go/overlay/vnet"
 	. "github.com/saichler/layer8/go/overlay/vnic"
-	. "github.com/saichler/types/go/common"
+	. "github.com/saichler/l8types/go/ifs"
 	"strconv"
 	"sync"
 )

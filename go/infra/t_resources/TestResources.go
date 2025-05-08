@@ -5,12 +5,12 @@ import (
 	"github.com/saichler/reflect/go/reflect/cloning"
 	"github.com/saichler/reflect/go/reflect/introspecting"
 	"github.com/saichler/servicepoints/go/points/service_points"
-	"github.com/saichler/shared/go/share/logger"
-	"github.com/saichler/shared/go/share/registry"
-	"github.com/saichler/shared/go/share/resources"
-	"github.com/saichler/types/go/common"
-	"github.com/saichler/types/go/testtypes"
-	"github.com/saichler/types/go/types"
+	"github.com/saichler/l8utils/go/utils/logger"
+	"github.com/saichler/l8utils/go/utils/registry"
+	"github.com/saichler/l8utils/go/utils/resources"
+	"github.com/saichler/l8types/go/ifs"
+	"github.com/saichler/l8types/go/testtypes"
+	"github.com/saichler/l8types/go/types"
 	"strconv"
 	"testing"
 	"time"
@@ -23,12 +23,12 @@ const (
 
 var Log = logger.NewLoggerDirectImpl(&logger.FmtLogMethod{})
 
-func CreateResources(vnetPort, vnicNum int, level common.LogLevel) (common.IResources, string) {
+func CreateResources(vnetPort, vnicNum int, level ifs.LogLevel) (ifs.IResources, string) {
 	alias := AliasOf(vnetPort, vnicNum)
 	_log := logger.NewLoggerDirectImpl(&logger.FmtLogMethod{})
 	_log.SetLogLevel(level)
 	_registry := registry.NewRegistry()
-	_security, err := common.LoadSecurityProvider()
+	_security, err := ifs.LoadSecurityProvider()
 	if err != nil {
 		panic("Failed to load security provider " + err.Error())
 	}
