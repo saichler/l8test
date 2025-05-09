@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"github.com/saichler/reflect/go/reflect/cloning"
 	"github.com/saichler/reflect/go/reflect/introspecting"
-	"github.com/saichler/l8services/go/points/service_points"
+	"github.com/saichler/l8services/go/services/service_points"
 	"github.com/saichler/l8utils/go/utils/logger"
 	"github.com/saichler/l8utils/go/utils/registry"
 	"github.com/saichler/l8utils/go/utils/resources"
