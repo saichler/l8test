@@ -1,4 +1,4 @@
-package t_servicepoints
+package t_service
 
 import "github.com/saichler/l8types/go/ifs"
 

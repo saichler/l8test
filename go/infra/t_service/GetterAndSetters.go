@@ -1,6 +1,6 @@
-package t_servicepoints
+package t_service
 
-func (this *TestServicePointBase) Reset() {
+func (this *TestServiceBase) Reset() {
 	this.postNumber.Add(this.postNumber.Load() * -1)
 	this.putNumber.Add(this.putNumber.Load() * -1)
 	this.patchNumber.Add(this.patchNumber.Load() * -1)
@@ -9,38 +9,38 @@ func (this *TestServicePointBase) Reset() {
 	this.errorMode = false
 }
 
-func (this *TestServicePointBase) Name() string {
+func (this *TestServiceBase) Name() string {
 	return this.name
 }
 
-func (this *TestServicePointBase) ErrorMode() bool {
+func (this *TestServiceBase) ErrorMode() bool {
 	return this.errorMode
 }
 
-func (this *TestServicePointBase) SetErrorMode(b bool) {
+func (this *TestServiceBase) SetErrorMode(b bool) {
 	this.errorMode = b
 }
 
-func (this *TestServicePointBase) PostN() int {
+func (this *TestServiceBase) PostN() int {
 	return int(this.postNumber.Load())
 }
 
-func (this *TestServicePointBase) PutN() int {
+func (this *TestServiceBase) PutN() int {
 	return int(this.putNumber.Load())
 }
 
-func (this *TestServicePointBase) PatchN() int {
+func (this *TestServiceBase) PatchN() int {
 	return int(this.patchNumber.Load())
 }
 
-func (this *TestServicePointBase) GetN() int {
+func (this *TestServiceBase) GetN() int {
 	return int(this.getNumber.Load())
 }
 
-func (this *TestServicePointBase) DeleteN() int {
+func (this *TestServiceBase) DeleteN() int {
 	return int(this.deleteNumber.Load())
 }
 
-func (this *TestServicePointBase) FailedN() int {
+func (this *TestServiceBase) FailedN() int {
 	return int(this.failedNumber.Load())
 }

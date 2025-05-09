@@ -15,7 +15,7 @@ func TestMain(m *testing.M) {
 	tear()
 }
 
-func TestServicePointValid(t *testing.T) {
+func TestServiceValid(t *testing.T) {
 
 	t_resources.CreateTestModelInstance(1)
 

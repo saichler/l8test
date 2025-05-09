@@ -38,7 +38,7 @@ func CreateResources(vnetPort, vnicNum int, level ifs.LogLevel) (ifs.IResources,
 		LocalAlias:  alias,
 		VnetPort:    uint32(vnetPort)}
 	_introspector := introspecting.NewIntrospect(_registry)
-	_servicepoints := manager.NewServicePoints(_introspector, _config)
+	_servicepoints := manager.NewServices(_introspector, _config)
 	_resources := resources.NewResources(_registry, _security, _servicepoints, _log, nil, nil, _config, _introspector)
 	return _resources, alias
 }

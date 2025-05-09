@@ -3,7 +3,7 @@ package t_topology
 import (
 	"fmt"
 	. "github.com/saichler/l8test/go/infra/t_resources"
-	. "github.com/saichler/l8test/go/infra/t_servicepoints"
+	. "github.com/saichler/l8test/go/infra/t_service"
 	"github.com/saichler/layer8/go/overlay/health"
 	. "github.com/saichler/layer8/go/overlay/vnet"
 	. "github.com/saichler/layer8/go/overlay/vnic"
@@ -16,9 +16,9 @@ type TestTopology struct {
 	vnets       map[string]*VNet
 	vnetsOrder  []*VNet
 	vnics       map[string]IVNic
-	handlers    map[string]*TestServicePointHandler
-	trHandlers  map[string]*TestServicePointTransactionHandler
-	repHandlers map[string]*TestServicePointReplicationHandler
+	handlers    map[string]*TestServiceHandler
+	trHandlers  map[string]*TestServiceTransactionHandler
+	repHandlers map[string]*TestServiceReplicationHandler
 	mtx         *sync.RWMutex
 }
 
@@ -26,9 +26,9 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 	this := &TestTopology{}
 	this.vnets = make(map[string]*VNet)
 	this.vnics = make(map[string]IVNic)
-	this.handlers = make(map[string]*TestServicePointHandler)
-	this.trHandlers = make(map[string]*TestServicePointTransactionHandler)
-	this.repHandlers = make(map[string]*TestServicePointReplicationHandler)
+	this.handlers = make(map[string]*TestServiceHandler)
+	this.trHandlers = make(map[string]*TestServiceTransactionHandler)
+	this.repHandlers = make(map[string]*TestServiceReplicationHandler)
 	this.vnetsOrder = make([]*VNet, 0)
 	this.mtx = &sync.RWMutex{}
 
@@ -155,14 +155,14 @@ func (this *TestTopology) VnicByVnetNum(vnetNum, vnicNum int) IVNic {
 	return this.vnics[alias]
 }
 
-func (this *TestTopology) HandlerByPort(vnetPort, vnicNum int) *TestServicePointHandler {
+func (this *TestTopology) HandlerByPort(vnetPort, vnicNum int) *TestServiceHandler {
 	this.mtx.RLock()
 	defer this.mtx.RUnlock()
 	alias := AliasOf(vnetPort, vnicNum)
 	return this.handlers[alias]
 }
 
-func (this *TestTopology) HandlerByVnetNum(vnetNum, vnicNum int) *TestServicePointHandler {
+func (this *TestTopology) HandlerByVnetNum(vnetNum, vnicNum int) *TestServiceHandler {
 	this.mtx.RLock()
 	defer this.mtx.RUnlock()
 	vnetPort := int(this.vnetsOrder[vnetNum-1].Resources().SysConfig().VnetPort)
@@ -170,7 +170,7 @@ func (this *TestTopology) HandlerByVnetNum(vnetNum, vnicNum int) *TestServicePoi
 	return this.handlers[alias]
 }
 
-func (this *TestTopology) TrHandlerByVnetNum(vnetNum, vnicNum int) *TestServicePointTransactionHandler {
+func (this *TestTopology) TrHandlerByVnetNum(vnetNum, vnicNum int) *TestServiceTransactionHandler {
 	this.mtx.RLock()
 	defer this.mtx.RUnlock()
 	vnetPort := int(this.vnetsOrder[vnetNum-1].Resources().SysConfig().VnetPort)
@@ -178,7 +178,7 @@ func (this *TestTopology) TrHandlerByVnetNum(vnetNum, vnicNum int) *TestServiceP
 	return this.trHandlers[alias]
 }
 
-func (this *TestTopology) RepHandlerByVnetNum(vnetNum, vnicNum int) *TestServicePointReplicationHandler {
+func (this *TestTopology) RepHandlerByVnetNum(vnetNum, vnicNum int) *TestServiceReplicationHandler {
 	this.mtx.RLock()
 	defer this.mtx.RUnlock()
 	vnetPort := int(this.vnetsOrder[vnetNum-1].Resources().SysConfig().VnetPort)
@@ -207,30 +207,30 @@ func (this *TestTopology) ResetHandlers() {
 	}
 }
 
-func (this *TestTopology) AllHandlers() []*TestServicePointHandler {
+func (this *TestTopology) AllHandlers() []*TestServiceHandler {
 	this.mtx.RLock()
 	defer this.mtx.RUnlock()
-	result := make([]*TestServicePointHandler, 0)
+	result := make([]*TestServiceHandler, 0)
 	for _, h := range this.handlers {
 		result = append(result, h)
 	}
 	return result
 }
 
-func (this *TestTopology) AllTrHandlers() []*TestServicePointTransactionHandler {
+func (this *TestTopology) AllTrHandlers() []*TestServiceTransactionHandler {
 	this.mtx.RLock()
 	defer this.mtx.RUnlock()
-	result := make([]*TestServicePointTransactionHandler, 0)
+	result := make([]*TestServiceTransactionHandler, 0)
 	for _, h := range this.trHandlers {
 		result = append(result, h)
 	}
 	return result
 }
 
-func (this *TestTopology) AllRepHandlers() []*TestServicePointReplicationHandler {
+func (this *TestTopology) AllRepHandlers() []*TestServiceReplicationHandler {
 	this.mtx.RLock()
 	defer this.mtx.RUnlock()
-	result := make([]*TestServicePointReplicationHandler, 0)
+	result := make([]*TestServiceReplicationHandler, 0)
 	for _, h := range this.repHandlers {
 		result = append(result, h)
 	}
@@ -277,11 +277,11 @@ func (this *TestTopology) SetLogLevel(lvl LogLevel) {
 }
 
 func (this *TestTopology) ReActivateTestService(nic IVNic) {
-	h, err := nic.Resources().Services().Activate(ServicePointType, ServiceName, 0, nic.Resources(), nil,
+	h, err := nic.Resources().Services().Activate(ServiceType, ServiceName, 0, nic.Resources(), nil,
 		nic.Resources().SysConfig().LocalAlias)
 	if err != nil {
 		panic(err)
 	}
-	handler := h.(*TestServicePointHandler)
+	handler := h.(*TestServiceHandler)
 	this.handlers[nic.Resources().SysConfig().LocalAlias] = handler
 }
