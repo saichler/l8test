@@ -22,7 +22,7 @@ type TestServiceBase struct {
 }
 
 const (
-	ServiceName         = "Tests"
+	ServiceName    = "Tests"
 	ServiceType    = "TestServiceHandler"
 	ServiceTrType  = "TestServiceTransactionHandler"
 	ServiceRepType = "TestServiceReplicationHandler"
@@ -50,7 +50,7 @@ func (this *TestServiceBase) DeActivate() error {
 	return nil
 }
 
-func (this *TestServiceBase) Post(pb ifs.IElements, resourcs ifs.IResources) ifs.IElements {
+func (this *TestServiceBase) Post(pb ifs.IElements, vnic ifs.IVNic) ifs.IElements {
 	Log.Debug("Post -", this.name, "- Test callback")
 	this.postNumber.Add(1)
 	var err error
@@ -59,7 +59,7 @@ func (this *TestServiceBase) Post(pb ifs.IElements, resourcs ifs.IResources) ifs
 	}
 	return New(err, pb.Element())
 }
-func (this *TestServiceBase) Put(pb ifs.IElements, resourcs ifs.IResources) ifs.IElements {
+func (this *TestServiceBase) Put(pb ifs.IElements, vnic ifs.IVNic) ifs.IElements {
 	Log.Debug("Put -", this.name, "- Test callback")
 	this.putNumber.Add(1)
 	var err error
@@ -68,7 +68,7 @@ func (this *TestServiceBase) Put(pb ifs.IElements, resourcs ifs.IResources) ifs.
 	}
 	return New(err, pb.Element())
 }
-func (this *TestServiceBase) Patch(pb ifs.IElements, resourcs ifs.IResources) ifs.IElements {
+func (this *TestServiceBase) Patch(pb ifs.IElements, vnic ifs.IVNic) ifs.IElements {
 	Log.Debug("Patch -", this.name, "- Test callback")
 	this.patchNumber.Add(1)
 	var err error
@@ -77,7 +77,7 @@ func (this *TestServiceBase) Patch(pb ifs.IElements, resourcs ifs.IResources) if
 	}
 	return New(err, pb.Element())
 }
-func (this *TestServiceBase) Delete(pb ifs.IElements, resourcs ifs.IResources) ifs.IElements {
+func (this *TestServiceBase) Delete(pb ifs.IElements, vnic ifs.IVNic) ifs.IElements {
 	Log.Debug("Delete -", this.name, "- Test callback")
 	this.deleteNumber.Add(1)
 	var err error
@@ -86,7 +86,7 @@ func (this *TestServiceBase) Delete(pb ifs.IElements, resourcs ifs.IResources) i
 	}
 	return New(err, pb.Element())
 }
-func (this *TestServiceBase) GetCopy(pb ifs.IElements, resourcs ifs.IResources) ifs.IElements {
+func (this *TestServiceBase) GetCopy(pb ifs.IElements, vnic ifs.IVNic) ifs.IElements {
 	Log.Debug("Get -", this.name, "- Test callback")
 	this.getNumber.Add(1)
 	var err error
@@ -95,7 +95,7 @@ func (this *TestServiceBase) GetCopy(pb ifs.IElements, resourcs ifs.IResources) 
 	}
 	return New(err, pb.Element())
 }
-func (this *TestServiceBase) Get(pb ifs.IElements, resourcs ifs.IResources) ifs.IElements {
+func (this *TestServiceBase) Get(pb ifs.IElements, vnic ifs.IVNic) ifs.IElements {
 	Log.Debug("Get -", this.name, "- Test callback")
 	this.getNumber.Add(1)
 	var err error
@@ -104,7 +104,7 @@ func (this *TestServiceBase) Get(pb ifs.IElements, resourcs ifs.IResources) ifs.
 	}
 	return New(err, pb.Element())
 }
-func (this *TestServiceBase) Failed(pb ifs.IElements, resourcs ifs.IResources, info ifs.IMessage) ifs.IElements {
+func (this *TestServiceBase) Failed(pb ifs.IElements, vnic ifs.IVNic, info ifs.IMessage) ifs.IElements {
 	dest := "n/a"
 	msg := "n/a"
 	if info != nil {
