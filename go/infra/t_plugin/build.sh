@@ -1,1 +1,1 @@
-go build -buildmode=plugin -o test2.so TestPlugin.go
+go build -buildmode=plugin -o test1.so TestPlugin.go

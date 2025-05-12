@@ -129,6 +129,9 @@ func (this *TestServiceBase) ServiceName() string {
 func (this *TestServiceBase) ServiceModel() ifs.IElements {
 	return New(nil, &testtypes.TestProto{})
 }
+func (this *TestServiceBase) WebService() ifs.IWebService {
+	return nil
+}
 
 type TestServiceHandler struct {
 	TestServiceBase
