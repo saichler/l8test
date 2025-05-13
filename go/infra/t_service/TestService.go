@@ -7,6 +7,7 @@ import (
 	. "github.com/saichler/l8test/go/infra/t_resources"
 	"github.com/saichler/l8types/go/ifs"
 	"github.com/saichler/l8types/go/testtypes"
+	"github.com/saichler/l8utils/go/utils/web"
 	"sync/atomic"
 )
 
@@ -129,9 +130,6 @@ func (this *TestServiceBase) ServiceName() string {
 func (this *TestServiceBase) ServiceModel() ifs.IElements {
 	return New(nil, &testtypes.TestProto{})
 }
-func (this *TestServiceBase) WebService() ifs.IWebService {
-	return nil
-}
 
 type TestServiceHandler struct {
 	TestServiceBase
@@ -139,6 +137,11 @@ type TestServiceHandler struct {
 
 func (this *TestServiceHandler) TransactionMethod() ifs.ITransactionMethod {
 	return nil
+}
+
+func (this *TestServiceHandler) WebService() ifs.IWebService {
+	pb := &testtypes.TestProto{}
+	return web.New(ServiceName, 0, pb, pb, pb, pb, pb, pb, pb, pb, pb, pb)
 }
 
 type TestServiceTransactionHandler struct {
@@ -157,6 +160,10 @@ func (this *TestServiceTransactionHandler) ReplicationCount() int {
 }
 func (this *TestServiceTransactionHandler) KeyOf(elements ifs.IElements, resources ifs.IResources) string {
 	return ""
+}
+func (this *TestServiceTransactionHandler) WebService() ifs.IWebService {
+	pb := &testtypes.TestProto{}
+	return web.New(ServiceName, 0, pb, pb, pb, pb, pb, pb, pb, pb, pb, pb)
 }
 
 type TestServiceReplicationHandler struct {
@@ -177,4 +184,8 @@ func (this *TestServiceReplicationHandler) ReplicationCount() int {
 func (this *TestServiceReplicationHandler) KeyOf(elements ifs.IElements, resources ifs.IResources) string {
 	pb := elements.Element().(*testtypes.TestProto)
 	return pb.MyString
+}
+func (this *TestServiceReplicationHandler) WebService() ifs.IWebService {
+	pb := &testtypes.TestProto{}
+	return web.New(ServiceName, 0, pb, pb, pb, pb, pb, pb, pb, pb, pb, pb)
 }
