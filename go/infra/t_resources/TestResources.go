@@ -27,19 +27,23 @@ func CreateResources(vnetPort, vnicNum int, level ifs.LogLevel) (ifs.IResources,
 	alias := AliasOf(vnetPort, vnicNum)
 	_log := logger.NewLoggerDirectImpl(&logger.FmtLogMethod{})
 	_log.SetLogLevel(level)
-	_registry := registry.NewRegistry()
+	_resources := resources.NewResources(_log)
+	_resources.Set(registry.NewRegistry())
 	_security, err := ifs.LoadSecurityProvider()
 	if err != nil {
 		panic("Failed to load security provider " + err.Error())
 	}
+	_resources.Set(_security)
 	_config := &types.SysConfig{MaxDataSize: resources.DEFAULT_MAX_DATA_SIZE,
 		RxQueueSize: resources.DEFAULT_QUEUE_SIZE,
 		TxQueueSize: resources.DEFAULT_QUEUE_SIZE,
 		LocalAlias:  alias,
 		VnetPort:    uint32(vnetPort)}
-	_introspector := introspecting.NewIntrospect(_registry)
-	_servicepoints := manager.NewServices(_introspector, _config)
-	_resources := resources.NewResources(_registry, _security, _servicepoints, _log, nil, nil, _config, _introspector)
+	_resources.Set(_config)
+	_introspector := introspecting.NewIntrospect(_resources.Registry())
+	_resources.Set(_introspector)
+	_servicepoints := manager.NewServices(_resources)
+	_resources.Set(_servicepoints)
 	return _resources, alias
 }
 

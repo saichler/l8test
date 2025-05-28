@@ -28,7 +28,7 @@ func (this TestServicePlugin) InstallRegistry(vnic ifs.IVNic) error {
 
 func (this *TestServicePlugin) Install(vnic ifs.IVNic) error {
 	this.InstallRegistry(vnic)
-	
+
 	vnic.Resources().Logger().Info("#2 Registering Test Services on ", vnic.Resources().SysConfig().LocalAlias)
 	vnic.Resources().Services().RegisterServiceHandlerType(&t_service.TestServiceHandler{})
 	vnic.Resources().Services().RegisterServiceHandlerType(&t_service.TestServiceTransactionHandler{})

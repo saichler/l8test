@@ -10,7 +10,7 @@ var Plugin ifs.IPlugin = &TestRegistryPlugin{}
 
 type TestRegistryPlugin struct{}
 
-func (this TestRegistryPlugin) Install(vnic ifs.IVNic) error {
+func (this *TestRegistryPlugin) Install(vnic ifs.IVNic) error {
 	vnic.Resources().Logger().Info("#2 Registering Test Elements on ", vnic.Resources().SysConfig().LocalAlias)
 	vnic.Resources().Introspector().Clean("TestProto")
 	vnic.Resources().Registry().UnRegister("TestProto")
