@@ -29,19 +29,19 @@ const (
 	ServiceRepType = "TestServiceReplicationHandler"
 )
 
-func (this *TestServiceHandler) Activate(serviceName string, serviceArea uint16,
+func (this *TestServiceHandler) Activate(serviceName string, serviceArea byte,
 	r ifs.IResources, l ifs.IServiceCacheListener, args ...interface{}) error {
 	this.name = args[0].(string)
 	return nil
 }
 
-func (this *TestServiceTransactionHandler) Activate(serviceName string, serviceArea uint16,
+func (this *TestServiceTransactionHandler) Activate(serviceName string, serviceArea byte,
 	r ifs.IResources, l ifs.IServiceCacheListener, args ...interface{}) error {
 	this.name = args[0].(string)
 	return nil
 }
 
-func (this *TestServiceReplicationHandler) Activate(serviceName string, serviceArea uint16,
+func (this *TestServiceReplicationHandler) Activate(serviceName string, serviceArea byte,
 	r ifs.IResources, l ifs.IServiceCacheListener, args ...interface{}) error {
 	this.name = args[0].(string)
 	this.cache = dcache.NewDistributedCache(serviceName, serviceArea, "TestProto", r.SysConfig().LocalUuid, l, r)
@@ -105,7 +105,7 @@ func (this *TestServiceBase) Get(pb ifs.IElements, vnic ifs.IVNic) ifs.IElements
 	}
 	return New(err, pb.Element())
 }
-func (this *TestServiceBase) Failed(pb ifs.IElements, vnic ifs.IVNic, info ifs.IMessage) ifs.IElements {
+func (this *TestServiceBase) Failed(pb ifs.IElements, vnic ifs.IVNic, info *ifs.Message) ifs.IElements {
 	dest := "n/a"
 	msg := "n/a"
 	if info != nil {

@@ -29,7 +29,7 @@ func CreateResources(vnetPort, vnicNum int, level ifs.LogLevel) (ifs.IResources,
 	_log.SetLogLevel(level)
 	_resources := resources.NewResources(_log)
 	_resources.Set(registry.NewRegistry())
-	_security, err := ifs.LoadSecurityProvider()
+	_security, err := ifs.LoadSecurityProvider(_resources)
 	if err != nil {
 		panic("Failed to load security provider " + err.Error())
 	}
