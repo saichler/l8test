@@ -4,10 +4,11 @@ import (
 	"fmt"
 	. "github.com/saichler/l8test/go/infra/t_resources"
 	. "github.com/saichler/l8test/go/infra/t_service"
+	. "github.com/saichler/l8types/go/ifs"
 	"github.com/saichler/layer8/go/overlay/health"
+	"github.com/saichler/layer8/go/overlay/protocol"
 	. "github.com/saichler/layer8/go/overlay/vnet"
 	. "github.com/saichler/layer8/go/overlay/vnic"
-	. "github.com/saichler/l8types/go/ifs"
 	"strconv"
 	"sync"
 )
@@ -23,6 +24,7 @@ type TestTopology struct {
 }
 
 func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *TestTopology {
+	protocol.Discovery_Enabled = false
 	this := &TestTopology{}
 	this.vnets = make(map[string]*VNet)
 	this.vnics = make(map[string]IVNic)
