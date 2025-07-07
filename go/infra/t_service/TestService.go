@@ -23,7 +23,7 @@ type TestServiceBase struct {
 }
 
 const (
-	ServiceName    = "Tests_____"
+	ServiceName    = "Tests"
 	ServiceType    = "TestServiceHandler"
 	ServiceTrType  = "TestServiceTransactionHandler"
 	ServiceRepType = "TestServiceReplicationHandler"
