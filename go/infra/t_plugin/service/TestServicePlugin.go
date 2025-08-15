@@ -18,11 +18,13 @@ func (this TestServicePlugin) InstallRegistry(vnic ifs.IVNic) error {
 	vnic.Resources().Registry().UnRegister("TestProto")
 	vnic.Resources().Registry().UnRegister("TestProtoSub")
 	vnic.Resources().Registry().UnRegister("TestProtoSubSub")
+	vnic.Resources().Registry().UnRegister("TestProtoList")
 	node, err := vnic.Resources().Introspector().Inspect(&testtypes.TestProto{})
 	if err != nil {
 		return err
 	}
 	introspecting.AddPrimaryKeyDecorator(node, "MyString")
+	vnic.Resources().Registry().Register(&testtypes.TestProtoList{})
 	return nil
 }
 

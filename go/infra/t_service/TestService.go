@@ -141,7 +141,8 @@ func (this *TestServiceHandler) TransactionMethod() ifs.ITransactionMethod {
 
 func (this *TestServiceHandler) WebService() ifs.IWebService {
 	pb := &testtypes.TestProto{}
-	return web.New(ServiceName, 0, pb, pb, pb, pb, pb, pb, pb, pb, pb, pb)
+	pblist := &testtypes.TestProtoList{}
+	return web.New(ServiceName, 0, pb, pb, pb, pb, pb, pb, pb, pb, pb, pblist)
 }
 
 type TestServiceTransactionHandler struct {

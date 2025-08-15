@@ -24,6 +24,7 @@ func createVnic(vnetPort int, vnicNum int, serviceArea int32, level ifs.LogLevel
 	var handlerRep *t_service.TestServiceReplicationHandler
 
 	if serviceArea != -1 {
+		_resources.Registry().Register(&testtypes.TestProtoList{})
 		_resources.Registry().Register(&testtypes.TestProto{})
 		_resources.Services().RegisterServiceHandlerType(&t_service.TestServiceHandler{})
 		_resources.Services().RegisterServiceHandlerType(&t_service.TestServiceTransactionHandler{})
