@@ -188,5 +188,6 @@ func (this *TestServiceReplicationHandler) KeyOf(elements ifs.IElements, resourc
 }
 func (this *TestServiceReplicationHandler) WebService() ifs.IWebService {
 	pb := &testtypes.TestProto{}
-	return web.New(ServiceName, 0, pb, pb, pb, pb, pb, pb, pb, pb, pb, pb)
+	pbList := &testtypes.TestProtoList{}
+	return web.New(ServiceName, 0, pb, pb, pb, pb, pb, pb, pb, pb, pb, pbList)
 }
