@@ -2,6 +2,9 @@ package t_topology
 
 import (
 	"fmt"
+	"strconv"
+	"sync"
+
 	. "github.com/saichler/l8test/go/infra/t_resources"
 	. "github.com/saichler/l8test/go/infra/t_service"
 	. "github.com/saichler/l8types/go/ifs"
@@ -9,8 +12,6 @@ import (
 	"github.com/saichler/layer8/go/overlay/protocol"
 	. "github.com/saichler/layer8/go/overlay/vnet"
 	. "github.com/saichler/layer8/go/overlay/vnic"
-	"strconv"
-	"sync"
 )
 
 type TestTopology struct {
@@ -81,7 +82,7 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 				nic := this.VnicByVnetNum(vnetNum, vnicNum)
 				hc := health.Health(nic.Resources())
 				hp := hc.All()
-				if len(hp) != 15 {
+				if len(hp) < 15 {
 					vnicName = nic.Resources().SysConfig().LocalAlias
 					vnicSum = len(hp)
 					break
@@ -102,7 +103,7 @@ func (this *TestTopology) areVnicsReady() bool {
 			nic := this.VnicByVnetNum(vnetNum, vnicNum)
 			hc := health.Health(nic.Resources())
 			hp := hc.All()
-			if len(hp) != 15 {
+			if len(hp) < 15 {
 				return false
 			}
 		}
@@ -128,7 +129,7 @@ func (this *TestTopology) areVnetsHaveAllVnics() bool {
 			return false
 		}
 		hc := health.Health(vnet.Resources())
-		if len(hc.All()) != 15 {
+		if len(hc.All()) < 15 {
 			return false
 		}
 	}

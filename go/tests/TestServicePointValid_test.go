@@ -34,6 +34,8 @@ func TestServiceValid(t *testing.T) {
 
 	time.Sleep(time.Second * 5)
 	fmt.Println("Messages created before:", protocol.MessagesCreated())
+	fmt.Println("HandleData before:", protocol.HandleData())
 	time.Sleep(time.Second * 5)
 	fmt.Println("Messages created after:", protocol.MessagesCreated())
+	fmt.Println("HandleData after:", protocol.HandleData())
 }
