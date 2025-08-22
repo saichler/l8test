@@ -94,6 +94,10 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 		}
 		panic("Vnics are not ready, vnic " + vnicName + " has only " + strconv.Itoa(vnicSum) + " instead of 15")
 	}
+
+	if !WaitForCondition(this.areVnicsServicesReady, 5, nil, "Vnics are not ready!") {
+		panic("Vnic Test Services are not ready")
+	}
 	return this
 }
 
@@ -104,6 +108,28 @@ func (this *TestTopology) areVnicsReady() bool {
 			hc := health.Health(nic.Resources())
 			hp := hc.All()
 			if len(hp) < 15 {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func (this *TestTopology) areVnicsServicesReady() bool {
+	for vnetNum := 1; vnetNum <= 3; vnetNum++ {
+		for vnicNum := 1; vnicNum <= 4; vnicNum++ {
+			nic := this.VnicByVnetNum(vnetNum, vnicNum)
+			hc := health.Health(nic.Resources())
+			hps := hc.All()
+			count := 0
+			for _, hp := range hps {
+				for srv, _ := range hp.Services.ServiceToAreas {
+					if srv == ServiceName {
+						count++
+					}
+				}
+			}
+			if count < 9 {
 				return false
 			}
 		}
