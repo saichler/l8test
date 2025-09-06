@@ -2,13 +2,14 @@ package t_service
 
 import (
 	"errors"
+	"sync/atomic"
+
 	"github.com/saichler/l8services/go/services/dcache"
 	. "github.com/saichler/l8srlz/go/serialize/object"
 	. "github.com/saichler/l8test/go/infra/t_resources"
 	"github.com/saichler/l8types/go/ifs"
 	"github.com/saichler/l8types/go/testtypes"
 	"github.com/saichler/l8utils/go/utils/web"
-	"sync/atomic"
 )
 
 type TestServiceBase struct {
@@ -135,7 +136,7 @@ type TestServiceHandler struct {
 	TestServiceBase
 }
 
-func (this *TestServiceHandler) TransactionMethod() ifs.ITransactionMethod {
+func (this *TestServiceHandler) TransactionConfig() ifs.ITransactionConfig {
 	return nil
 }
 
@@ -149,7 +150,7 @@ type TestServiceTransactionHandler struct {
 	TestServiceBase
 }
 
-func (this *TestServiceTransactionHandler) TransactionMethod() ifs.ITransactionMethod {
+func (this *TestServiceTransactionHandler) TransactionConfig() ifs.ITransactionConfig {
 	return this
 }
 
@@ -162,6 +163,9 @@ func (this *TestServiceTransactionHandler) ReplicationCount() int {
 func (this *TestServiceTransactionHandler) KeyOf(elements ifs.IElements, resources ifs.IResources) string {
 	return ""
 }
+func (this *TestServiceTransactionHandler) ConcurrentGets() bool {
+	return true
+}
 func (this *TestServiceTransactionHandler) WebService() ifs.IWebService {
 	pb := &testtypes.TestProto{}
 	return web.New(ServiceName, 0, pb, pb, pb, pb, pb, pb, pb, pb, pb, pb)
@@ -172,7 +176,7 @@ type TestServiceReplicationHandler struct {
 	cache ifs.IDistributedCache
 }
 
-func (this *TestServiceReplicationHandler) TransactionMethod() ifs.ITransactionMethod {
+func (this *TestServiceReplicationHandler) TransactionConfig() ifs.ITransactionConfig {
 	return this
 }
 
@@ -181,6 +185,9 @@ func (this *TestServiceReplicationHandler) Replication() bool {
 }
 func (this *TestServiceReplicationHandler) ReplicationCount() int {
 	return 2
+}
+func (this *TestServiceReplicationHandler) ConcurrentGets() bool {
+	return true
 }
 func (this *TestServiceReplicationHandler) KeyOf(elements ifs.IElements, resources ifs.IResources) string {
 	pb := elements.Element().(*testtypes.TestProto)
