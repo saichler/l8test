@@ -10,6 +10,7 @@ import (
 	"github.com/saichler/l8types/go/ifs"
 	"github.com/saichler/l8types/go/testtypes"
 	"github.com/saichler/l8utils/go/utils/web"
+	"github.com/saichler/reflect/go/reflect/introspecting"
 )
 
 type TestServiceBase struct {
@@ -45,7 +46,9 @@ func (this *TestServiceTransactionHandler) Activate(serviceName string, serviceA
 func (this *TestServiceReplicationHandler) Activate(serviceName string, serviceArea byte,
 	r ifs.IResources, l ifs.IServiceCacheListener, args ...interface{}) error {
 	this.name = args[0].(string)
-	this.cache = dcache.NewDistributedCache(serviceName, serviceArea, "TestProto", r.SysConfig().LocalUuid, l, r)
+	rnode, _ := r.Introspector().Inspect(testtypes.TestProto{})
+	introspecting.AddPrimaryKeyDecorator(rnode, "MyString")
+	this.cache = dcache.NewDistributedCache(serviceName, serviceArea, &testtypes.TestProto{}, nil, l, r)
 	return nil
 }
 func (this *TestServiceBase) DeActivate() error {
