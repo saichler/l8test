@@ -2,17 +2,19 @@ package t_resources
 
 import (
 	"bytes"
+	"strconv"
+	"testing"
+	"time"
+
 	"github.com/saichler/l8services/go/services/manager"
 	"github.com/saichler/l8types/go/ifs"
 	"github.com/saichler/l8types/go/testtypes"
+	"github.com/saichler/l8types/go/types/l8sysconfig"
 	"github.com/saichler/l8utils/go/utils/logger"
 	"github.com/saichler/l8utils/go/utils/registry"
 	"github.com/saichler/l8utils/go/utils/resources"
 	"github.com/saichler/reflect/go/reflect/cloning"
 	"github.com/saichler/reflect/go/reflect/introspecting"
-	"strconv"
-	"testing"
-	"time"
 )
 
 const (
@@ -33,7 +35,7 @@ func CreateResources(vnetPort, vnicNum int, level ifs.LogLevel) (ifs.IResources,
 		panic("Failed to load security provider " + err.Error())
 	}
 	_resources.Set(_security)
-	_config := &types.SysConfig{MaxDataSize: resources.DEFAULT_MAX_DATA_SIZE,
+	_config := &l8sysconfig.L8SysConfig{MaxDataSize: resources.DEFAULT_MAX_DATA_SIZE,
 		RxQueueSize: resources.DEFAULT_QUEUE_SIZE,
 		TxQueueSize: resources.DEFAULT_QUEUE_SIZE,
 		LocalAlias:  alias,
