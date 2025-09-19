@@ -3,8 +3,8 @@ package tests
 import (
 	"fmt"
 	"github.com/saichler/l8test/go/infra/t_resources"
-	"github.com/saichler/layer8/go/overlay/health"
-	"github.com/saichler/layer8/go/overlay/protocol"
+	"github.com/saichler/l8bus/go/overlay/health"
+	"github.com/saichler/l8bus/go/overlay/protocol"
 	"testing"
 	"time"
 )

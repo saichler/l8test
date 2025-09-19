@@ -8,10 +8,10 @@ import (
 	. "github.com/saichler/l8test/go/infra/t_resources"
 	. "github.com/saichler/l8test/go/infra/t_service"
 	. "github.com/saichler/l8types/go/ifs"
-	"github.com/saichler/layer8/go/overlay/health"
-	"github.com/saichler/layer8/go/overlay/protocol"
-	. "github.com/saichler/layer8/go/overlay/vnet"
-	. "github.com/saichler/layer8/go/overlay/vnic"
+	"github.com/saichler/l8bus/go/overlay/health"
+	"github.com/saichler/l8bus/go/overlay/protocol"
+	. "github.com/saichler/l8bus/go/overlay/vnet"
+	. "github.com/saichler/l8bus/go/overlay/vnic"
 )
 
 type TestTopology struct {
