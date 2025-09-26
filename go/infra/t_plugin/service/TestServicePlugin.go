@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
+
+	"github.com/saichler/l8reflect/go/reflect/introspecting"
 	"github.com/saichler/l8test/go/infra/t_service"
 	"github.com/saichler/l8types/go/ifs"
 	"github.com/saichler/l8types/go/testtypes"
-	"github.com/saichler/l8reflect/go/reflect/introspecting"
 )
 
 var Plugin ifs.IPlugin = &TestServicePlugin{}
@@ -38,15 +40,20 @@ func (this *TestServicePlugin) Install(vnic ifs.IVNic) error {
 
 	_, err := vnic.Resources().Services().Activate(t_service.ServiceType, t_service.ServiceName, 0, vnic.Resources(), nil, "plugin")
 	if err != nil {
+		fmt.Println("Error:", err.Error())
 		return err
 	}
 
 	_, err = vnic.Resources().Services().Activate(t_service.ServiceTrType, t_service.ServiceName, 1, vnic.Resources(), nil, "plugin")
 	if err != nil {
+		fmt.Println("Error:", err.Error())
 		return err
 	}
 
 	_, err = vnic.Resources().Services().Activate(t_service.ServiceRepType, t_service.ServiceName, 2, vnic.Resources(), vnic, "plugin")
-
+	if err != nil {
+		fmt.Println("Error:", err.Error())
+		return err
+	}
 	return nil
 }
