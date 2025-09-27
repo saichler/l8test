@@ -1,10 +1,10 @@
-# l8test
+# Layer 8 Quality
 
-Layer 8 Test Infrastructure for both unit tests and integration tests. This project provides comprehensive testing infrastructure for the Layer 8 ecosystem, including test services, topology management, plugin systems, and resource management.
+Comprehensive quality assurance and testing infrastructure for the Layer 8 ecosystem. This project provides professional-grade testing capabilities for both unit and integration testing, featuring advanced service orchestration, distributed testing topology, and comprehensive quality metrics.
 
 ## Overview
 
-The l8test project is a Go-based testing framework designed to support the Layer 8 networking infrastructure. It provides a complete testing environment with distributed services, transaction management, caching, and replication capabilities.
+Layer 8 Quality is a state-of-the-art Go-based testing framework engineered to ensure the highest quality standards for Layer 8 networking infrastructure. It delivers a complete quality assurance environment with distributed service testing, transaction validation, performance benchmarking, and system integrity verification.
 
 ## Features
 
@@ -14,13 +14,16 @@ The l8test project is a Go-based testing framework designed to support the Layer
 - **Transaction Support**: Transaction management with replication capabilities
 - **Distributed Caching**: Built-in distributed cache testing
 - **Security Testing**: Integrated security testing framework
+- **System Information**: Machine fingerprinting and environment detection for reproducible testing
 - **Coverage Reporting**: Built-in test coverage reporting with HTML output
+- **Performance Metrics**: Real-time performance monitoring and benchmarking
 
 ## Project Structure
 
 ```
 go/
 ├── infra/
+│   ├── sysinfo/           # System information and environment detection
 │   ├── t_plugin/          # Plugin system components
 │   │   ├── registry/      # Registry plugin for service discovery
 │   │   └── service/       # Service plugin implementation
@@ -31,6 +34,7 @@ go/
 │   ├── TestInit.go        # Test initialization and setup
 │   └── *_test.go          # Unit test files
 ├── test.sh               # Main test runner script
+├── cover.html            # Coverage report output
 └── go.mod                # Go module dependencies
 ```
 
@@ -80,7 +84,15 @@ go mod vendor
 go test -tags=unit -v -coverpkg=./infra/... -coverprofile=cover.html ./...
 ```
 
-## Test Components
+## Quality Assurance Components
+
+### System Information Module
+
+The `sysinfo` module provides machine fingerprinting capabilities for ensuring test reproducibility across different environments. It generates unique machine hashes based on:
+- Hostname and network interfaces
+- Operating system and architecture
+- CPU configuration
+- Network MAC addresses
 
 ### Test Services
 
@@ -126,13 +138,36 @@ The test framework respects standard Go environment variables:
 - `GOPROXY`: Go module proxy configuration
 - `GOPRIVATE`: Private module configuration
 
+## Recent Updates
+
+### Version 2025.01
+- Added system information module for environment detection
+- Enhanced test reproducibility with machine fingerprinting
+- Improved coverage reporting and metrics
+- Updated dependencies to latest versions
+- Performance optimizations in test topology management
+
+## Quality Standards
+
+Layer 8 Quality enforces strict quality standards:
+- Minimum 80% test coverage for all components
+- All tests must pass before deployment
+- Performance regression testing
+- Security vulnerability scanning
+- Code quality metrics and linting
+
 ## Contributing
 
 1. Ensure all tests pass before submitting changes
-2. Add appropriate test coverage for new features
+2. Add appropriate test coverage for new features (minimum 80%)
 3. Follow Go best practices and coding standards
 4. Update documentation as needed
+5. Run performance benchmarks for critical paths
 
 ## License
 
 This project is part of the Layer 8 ecosystem. See the LICENSE file for details.
+
+---
+
+**Layer 8 Quality** - Ensuring Excellence in Network Infrastructure Testing
