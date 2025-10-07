@@ -1,13 +1,14 @@
 package t_topology
 
 import (
+	"time"
+
+	"github.com/saichler/l8bus/go/overlay/vnet"
+	"github.com/saichler/l8bus/go/overlay/vnic"
 	"github.com/saichler/l8test/go/infra/t_resources"
 	"github.com/saichler/l8test/go/infra/t_service"
 	"github.com/saichler/l8types/go/ifs"
 	"github.com/saichler/l8types/go/testtypes"
-	"github.com/saichler/l8bus/go/overlay/vnet"
-	"github.com/saichler/l8bus/go/overlay/vnic"
-	"time"
 )
 
 func createVnet(vnetPort int, level ifs.LogLevel) *vnet.VNet {
@@ -29,18 +30,6 @@ func createVnic(vnetPort int, vnicNum int, serviceArea int32, level ifs.LogLevel
 		_resources.Services().RegisterServiceHandlerType(&t_service.TestServiceHandler{})
 		_resources.Services().RegisterServiceHandlerType(&t_service.TestServiceTransactionHandler{})
 		_resources.Services().RegisterServiceHandlerType(&t_service.TestServiceReplicationHandler{})
-
-		h, err := _resources.Services().Activate(t_service.ServiceType, t_service.ServiceName, 0, _resources, nil, alias)
-		if err != nil {
-			panic(err)
-		}
-		handler = h.(*t_service.TestServiceHandler)
-
-		hTr, err := _resources.Services().Activate(t_service.ServiceTrType, t_service.ServiceName, 1, _resources, nil, alias)
-		if err != nil {
-			panic(err)
-		}
-		handlerTr = hTr.(*t_service.TestServiceTransactionHandler)
 	}
 	_vnic := vnic.NewVirtualNetworkInterface(_resources, nil)
 	_vnic.Resources().SysConfig().KeepAliveIntervalSeconds = 30
@@ -48,6 +37,19 @@ func createVnic(vnetPort int, vnicNum int, serviceArea int32, level ifs.LogLevel
 
 	if serviceArea != -1 {
 		_vnic.WaitForConnection()
+
+		h, err := _resources.Services().Activate(t_service.ServiceType, t_service.ServiceName, 0, _resources, _vnic, alias)
+		if err != nil {
+			panic(err)
+		}
+		handler = h.(*t_service.TestServiceHandler)
+
+		hTr, err := _resources.Services().Activate(t_service.ServiceTrType, t_service.ServiceName, 1, _resources, _vnic, alias)
+		if err != nil {
+			panic(err)
+		}
+		handlerTr = hTr.(*t_service.TestServiceTransactionHandler)
+
 		hRep, err := _resources.Services().Activate(t_service.ServiceRepType, t_service.ServiceName, 2, _resources, _vnic, alias)
 		if err != nil {
 			panic(err)
