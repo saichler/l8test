@@ -5,13 +5,13 @@ import (
 	"strconv"
 	"sync"
 
-	. "github.com/saichler/l8test/go/infra/t_resources"
-	. "github.com/saichler/l8test/go/infra/t_service"
-	. "github.com/saichler/l8types/go/ifs"
 	"github.com/saichler/l8bus/go/overlay/health"
 	"github.com/saichler/l8bus/go/overlay/protocol"
 	. "github.com/saichler/l8bus/go/overlay/vnet"
 	. "github.com/saichler/l8bus/go/overlay/vnic"
+	. "github.com/saichler/l8test/go/infra/t_resources"
+	. "github.com/saichler/l8test/go/infra/t_service"
+	. "github.com/saichler/l8types/go/ifs"
 )
 
 type TestTopology struct {
@@ -134,6 +134,20 @@ func (this *TestTopology) areVnicsServicesReady() bool {
 			}
 		}
 	}
+
+	for vnetNum := 1; vnetNum <= 3; vnetNum++ {
+		for vnicNum := 1; vnicNum <= 3; vnicNum++ {
+			nic := this.VnicByVnetNum(vnetNum, vnicNum)
+			if nic.Resources().Services().GetLeader("Tests", 1) == "" {
+				return false
+			}
+			participants := len(nic.Resources().Services().GetParticipants("Tests", 1))
+			if participants != 9 {
+				return false
+			}
+		}
+	}
+
 	return true
 }
 
