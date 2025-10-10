@@ -25,6 +25,10 @@ func (this *TestServiceBase) PostN() int {
 	return int(this.postNumber.Load())
 }
 
+func (this *TestServiceBase) PostNReplica(i int) int {
+	return int(this.postReplica[i].Load())
+}
+
 func (this *TestServiceBase) PutN() int {
 	return int(this.putNumber.Load())
 }
@@ -35,6 +39,10 @@ func (this *TestServiceBase) PatchN() int {
 
 func (this *TestServiceBase) GetN() int {
 	return int(this.getNumber.Load())
+}
+
+func (this *TestServiceBase) GetNReplica(i int) int {
+	return int(this.getReplica[i].Load())
 }
 
 func (this *TestServiceBase) DeleteN() int {

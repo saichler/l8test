@@ -4,13 +4,13 @@ import (
 	"errors"
 	"sync/atomic"
 
+	"github.com/saichler/l8reflect/go/reflect/introspecting"
 	"github.com/saichler/l8services/go/services/dcache"
 	. "github.com/saichler/l8srlz/go/serialize/object"
 	. "github.com/saichler/l8test/go/infra/t_resources"
 	"github.com/saichler/l8types/go/ifs"
 	"github.com/saichler/l8types/go/testtypes"
 	"github.com/saichler/l8utils/go/utils/web"
-	"github.com/saichler/l8reflect/go/reflect/introspecting"
 )
 
 type TestServiceBase struct {
@@ -22,6 +22,8 @@ type TestServiceBase struct {
 	getNumber    atomic.Int32
 	failedNumber atomic.Int32
 	errorMode    bool
+	getReplica   []atomic.Int32
+	postReplica  []atomic.Int32
 }
 
 const (
@@ -48,7 +50,9 @@ func (this *TestServiceReplicationHandler) Activate(serviceName string, serviceA
 	this.name = args[0].(string)
 	rnode, _ := r.Introspector().Inspect(testtypes.TestProto{})
 	introspecting.AddPrimaryKeyDecorator(rnode, "MyString")
-	this.cache = dcache.NewDistributedCache(serviceName, serviceArea, &testtypes.TestProto{}, nil, l, r)
+	this.cache = dcache.NewReplicationCache(r, nil)
+	this.postReplica = make([]atomic.Int32, 2)
+	this.getReplica = make([]atomic.Int32, 2)
 	return nil
 }
 func (this *TestServiceBase) DeActivate() error {
@@ -57,7 +61,11 @@ func (this *TestServiceBase) DeActivate() error {
 
 func (this *TestServiceBase) Post(pb ifs.IElements, vnic ifs.IVNic) ifs.IElements {
 	Log.Debug("Post -", this.name, "- Test callback")
-	this.postNumber.Add(1)
+	if pb.IsReplica() {
+		this.postReplica[pb.Replica()].Add(1)
+	} else {
+		this.postNumber.Add(1)
+	}
 	var err error
 	if this.errorMode {
 		err = errors.New("Post - TestServiceBase Error")
@@ -91,18 +99,14 @@ func (this *TestServiceBase) Delete(pb ifs.IElements, vnic ifs.IVNic) ifs.IEleme
 	}
 	return New(err, pb.Element())
 }
-func (this *TestServiceBase) GetCopy(pb ifs.IElements, vnic ifs.IVNic) ifs.IElements {
-	Log.Debug("Get -", this.name, "- Test callback")
-	this.getNumber.Add(1)
-	var err error
-	if this.errorMode {
-		err = errors.New("GetCopy - TestServiceBase Error")
-	}
-	return New(err, pb.Element())
-}
+
 func (this *TestServiceBase) Get(pb ifs.IElements, vnic ifs.IVNic) ifs.IElements {
 	Log.Debug("Get -", this.name, "- Test callback")
-	this.getNumber.Add(1)
+	if pb.IsReplica() {
+		this.getReplica[pb.Replica()].Add(1)
+	} else {
+		this.getNumber.Add(1)
+	}
 	var err error
 	if this.errorMode {
 		err = errors.New("Get - TestServiceBase Error")
@@ -176,7 +180,7 @@ func (this *TestServiceTransactionHandler) WebService() ifs.IWebService {
 
 type TestServiceReplicationHandler struct {
 	TestServiceBase
-	cache ifs.IDistributedCache
+	cache ifs.IReplicationCache
 }
 
 func (this *TestServiceReplicationHandler) TransactionConfig() ifs.ITransactionConfig {
