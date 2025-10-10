@@ -22,8 +22,8 @@ type TestServiceBase struct {
 	getNumber    atomic.Int32
 	failedNumber atomic.Int32
 	errorMode    bool
-	getReplica   []atomic.Int32
-	postReplica  []atomic.Int32
+	getReplica   map[string]atomic.Int32
+	postReplica  map[string]atomic.Int32
 }
 
 const (
@@ -51,8 +51,8 @@ func (this *TestServiceReplicationHandler) Activate(serviceName string, serviceA
 	rnode, _ := r.Introspector().Inspect(testtypes.TestProto{})
 	introspecting.AddPrimaryKeyDecorator(rnode, "MyString")
 	this.cache = dcache.NewReplicationCache(r, nil)
-	this.postReplica = make([]atomic.Int32, 2)
-	this.getReplica = make([]atomic.Int32, 2)
+	this.postReplica = make(map[string]atomic.Int32, 2)
+	this.getReplica = make(map[string]atomic.Int32, 2)
 	return nil
 }
 func (this *TestServiceBase) DeActivate() error {
@@ -62,7 +62,10 @@ func (this *TestServiceBase) DeActivate() error {
 func (this *TestServiceBase) Post(pb ifs.IElements, vnic ifs.IVNic) ifs.IElements {
 	Log.Debug("Post -", this.name, "- Test callback")
 	if pb.IsReplica() {
-		this.postReplica[pb.Replica()].Add(1)
+		h := &TestServiceReplicationHandler{}
+		key := h.TransactionConfig().KeyOf(pb, vnic.Resources())
+		a := this.postReplica[key]
+		a.Add(1)
 	} else {
 		this.postNumber.Add(1)
 	}
@@ -103,7 +106,10 @@ func (this *TestServiceBase) Delete(pb ifs.IElements, vnic ifs.IVNic) ifs.IEleme
 func (this *TestServiceBase) Get(pb ifs.IElements, vnic ifs.IVNic) ifs.IElements {
 	Log.Debug("Get -", this.name, "- Test callback")
 	if pb.IsReplica() {
-		this.getReplica[pb.Replica()].Add(1)
+		h := &TestServiceReplicationHandler{}
+		key := h.TransactionConfig().KeyOf(pb, vnic.Resources())
+		a := this.getReplica[key]
+		a.Add(1)
 	} else {
 		this.getNumber.Add(1)
 	}
