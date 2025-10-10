@@ -2,6 +2,7 @@ package t_service
 
 import (
 	"errors"
+	"sync"
 	"sync/atomic"
 
 	"github.com/saichler/l8reflect/go/reflect/introspecting"
@@ -22,8 +23,8 @@ type TestServiceBase struct {
 	getNumber    atomic.Int32
 	failedNumber atomic.Int32
 	errorMode    bool
-	getReplica   map[string]atomic.Int32
-	postReplica  map[string]atomic.Int32
+	getReplica   *sync.Map
+	postReplica  *sync.Map
 }
 
 const (
@@ -51,8 +52,8 @@ func (this *TestServiceReplicationHandler) Activate(serviceName string, serviceA
 	rnode, _ := r.Introspector().Inspect(testtypes.TestProto{})
 	introspecting.AddPrimaryKeyDecorator(rnode, "MyString")
 	this.cache = dcache.NewReplicationCache(r, nil)
-	this.postReplica = make(map[string]atomic.Int32, 2)
-	this.getReplica = make(map[string]atomic.Int32, 2)
+	this.postReplica = &sync.Map{}
+	this.getReplica = &sync.Map{}
 	return nil
 }
 func (this *TestServiceBase) DeActivate() error {
@@ -64,8 +65,12 @@ func (this *TestServiceBase) Post(pb ifs.IElements, vnic ifs.IVNic) ifs.IElement
 	if pb.IsReplica() {
 		h := &TestServiceReplicationHandler{}
 		key := h.TransactionConfig().KeyOf(pb, vnic.Resources())
-		a := this.postReplica[key]
-		a.Add(1)
+		v, ok := this.postReplica.Load(key)
+		if !ok {
+			this.postReplica.Store(key, 1)
+		} else {
+			this.postReplica.Store(key, v.(int)+1)
+		}
 	} else {
 		this.postNumber.Add(1)
 	}
@@ -108,8 +113,12 @@ func (this *TestServiceBase) Get(pb ifs.IElements, vnic ifs.IVNic) ifs.IElements
 	if pb.IsReplica() {
 		h := &TestServiceReplicationHandler{}
 		key := h.TransactionConfig().KeyOf(pb, vnic.Resources())
-		a := this.getReplica[key]
-		a.Add(1)
+		v, ok := this.getReplica.Load(key)
+		if !ok {
+			this.getReplica.Store(key, 1)
+		} else {
+			this.getReplica.Store(key, v.(int)+1)
+		}
 	} else {
 		this.getNumber.Add(1)
 	}

@@ -1,6 +1,8 @@
 package t_service
 
-import "sync/atomic"
+import (
+	"sync"
+)
 
 func (this *TestServiceBase) Reset() {
 	this.postNumber.Add(this.postNumber.Load() * -1)
@@ -27,7 +29,7 @@ func (this *TestServiceBase) PostN() int {
 	return int(this.postNumber.Load())
 }
 
-func (this *TestServiceBase) PostNReplica() map[string]atomic.Int32 {
+func (this *TestServiceBase) PostNReplica() *sync.Map {
 	return this.postReplica
 }
 
@@ -43,7 +45,7 @@ func (this *TestServiceBase) GetN() int {
 	return int(this.getNumber.Load())
 }
 
-func (this *TestServiceBase) GetNReplica() map[string]atomic.Int32 {
+func (this *TestServiceBase) GetNReplica() *sync.Map {
 	return this.getReplica
 }
 
