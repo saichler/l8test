@@ -34,6 +34,8 @@ const (
 	ServiceRepType = "TestServiceReplicationHandler"
 )
 
+var test2Handler *TestServiceReplicationHandler
+
 func (this *TestServiceHandler) Activate(serviceName string, serviceArea byte,
 	r ifs.IResources, l ifs.IServiceCacheListener, args ...interface{}) error {
 	this.name = args[0].(string)
@@ -54,6 +56,7 @@ func (this *TestServiceReplicationHandler) Activate(serviceName string, serviceA
 	this.cache = dcache.NewReplicationCache(r, nil)
 	this.postReplica = &sync.Map{}
 	this.getReplica = &sync.Map{}
+	test2Handler = this
 	return nil
 }
 func (this *TestServiceBase) DeActivate() error {
@@ -63,14 +66,14 @@ func (this *TestServiceBase) DeActivate() error {
 func (this *TestServiceBase) Post(pb ifs.IElements, vnic ifs.IVNic) ifs.IElements {
 	Log.Debug("Post -", this.name, "- Test callback")
 	if pb.IsReplica() {
-		h := &TestServiceReplicationHandler{}
-		key := h.TransactionConfig().KeyOf(pb, vnic.Resources())
+		key := test2Handler.TransactionConfig().KeyOf(pb, vnic.Resources())
 		v, ok := this.postReplica.Load(key)
 		if !ok {
 			this.postReplica.Store(key, 1)
 		} else {
 			this.postReplica.Store(key, v.(int)+1)
 		}
+		test2Handler.cache.Post(pb.Element(), int(pb.Replica()))
 	} else {
 		this.postNumber.Add(1)
 	}
@@ -111,14 +114,15 @@ func (this *TestServiceBase) Delete(pb ifs.IElements, vnic ifs.IVNic) ifs.IEleme
 func (this *TestServiceBase) Get(pb ifs.IElements, vnic ifs.IVNic) ifs.IElements {
 	Log.Debug("Get -", this.name, "- Test callback")
 	if pb.IsReplica() {
-		h := &TestServiceReplicationHandler{}
-		key := h.TransactionConfig().KeyOf(pb, vnic.Resources())
+		key := test2Handler.TransactionConfig().KeyOf(pb, vnic.Resources())
 		v, ok := this.getReplica.Load(key)
 		if !ok {
 			this.getReplica.Store(key, 1)
 		} else {
 			this.getReplica.Store(key, v.(int)+1)
 		}
+		elem, _ := test2Handler.cache.Get(pb.Element(), int(pb.Replica()))
+		return New(nil, elem)
 	} else {
 		this.getNumber.Add(1)
 	}
