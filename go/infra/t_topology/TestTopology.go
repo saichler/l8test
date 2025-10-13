@@ -68,8 +68,8 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 
 	if !WaitForCondition(this.areVnetsHaveAllVnics, 3, nil, "Vnet are not ready 2") {
 		for _, vnet := range this.vnets {
-			hc := health.Health(vnet.Resources())
-			fmt.Println(vnet.Resources().SysConfig().LocalAlias, " ", vnet.ExternalCount(), vnet.LocalCount(), len(hc.All()))
+			hc, _ := health.HealthServiceCache(vnet.Resources())
+			fmt.Println(vnet.Resources().SysConfig().LocalAlias, " ", vnet.ExternalCount(), vnet.LocalCount(), hc.Size())
 		}
 		panic("Vnet are not ready 2")
 	}
@@ -80,11 +80,10 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 		for vnetNum := 1; vnetNum <= 3; vnetNum++ {
 			for vnicNum := 1; vnicNum <= 4; vnicNum++ {
 				nic := this.VnicByVnetNum(vnetNum, vnicNum)
-				hc := health.Health(nic.Resources())
-				hp := hc.All()
-				if len(hp) < 15 {
+				hc, _ := health.HealthServiceCache(nic.Resources())
+				if hc.Size() < 15 {
 					vnicName = nic.Resources().SysConfig().LocalAlias
-					vnicSum = len(hp)
+					vnicSum = hc.Size()
 					break
 				}
 			}
@@ -105,9 +104,8 @@ func (this *TestTopology) areVnicsReady() bool {
 	for vnetNum := 1; vnetNum <= 3; vnetNum++ {
 		for vnicNum := 1; vnicNum <= 4; vnicNum++ {
 			nic := this.VnicByVnetNum(vnetNum, vnicNum)
-			hc := health.Health(nic.Resources())
-			hp := hc.All()
-			if len(hp) < 15 {
+			hc, _ := health.HealthServiceCache(nic.Resources())
+			if hc.Size() < 15 {
 				return false
 			}
 		}
@@ -119,8 +117,7 @@ func (this *TestTopology) areVnicsServicesReady() bool {
 	for vnetNum := 1; vnetNum <= 3; vnetNum++ {
 		for vnicNum := 1; vnicNum <= 4; vnicNum++ {
 			nic := this.VnicByVnetNum(vnetNum, vnicNum)
-			hc := health.Health(nic.Resources())
-			hps := hc.All()
+			hps := health.All(nic.Resources())
 			count := 0
 			for _, hp := range hps {
 				for srv, _ := range hp.Services.ServiceToAreas {
@@ -168,8 +165,8 @@ func (this *TestTopology) areVnetsHaveAllVnics() bool {
 		if vnet.LocalCount() != 4 {
 			return false
 		}
-		hc := health.Health(vnet.Resources())
-		if len(hc.All()) < 15 {
+		hc, _ := health.HealthServiceCache(vnet.Resources())
+		if hc.Size() < 15 {
 			return false
 		}
 	}
