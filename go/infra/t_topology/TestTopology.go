@@ -94,6 +94,10 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 		panic("Vnics are not ready, vnic " + vnicName + " has only " + strconv.Itoa(vnicSum) + " instead of 15")
 	}
 
+	if !WaitForCondition(this.areVnicsServicesTransactionReady, 5, nil, "Vnics are not ready!") {
+		panic("Vnic Test Services Transactions are not ready")
+	}
+
 	if !WaitForCondition(this.areVnicsServicesReady, 5, nil, "Vnics are not ready!") {
 		panic("Vnic Test Services are not ready")
 	}
@@ -132,6 +136,10 @@ func (this *TestTopology) areVnicsServicesReady() bool {
 		}
 	}
 
+	return true
+}
+
+func (this *TestTopology) areVnicsServicesTransactionReady() bool {
 	for vnetNum := 1; vnetNum <= 3; vnetNum++ {
 		for vnicNum := 1; vnicNum <= 3; vnicNum++ {
 			nic := this.VnicByVnetNum(vnetNum, vnicNum)
