@@ -36,22 +36,26 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 	this.vnetsOrder = make([]*VNet, 0)
 	this.mtx = &sync.RWMutex{}
 
+	Log.Info("Creating Vnets...")
 	for _, vNetPort := range vnetPorts {
 		_vnet := createVnet(vNetPort, level)
 		this.vnets[_vnet.Resources().SysConfig().LocalAlias] = _vnet
 		this.vnetsOrder = append(this.vnetsOrder, _vnet)
 	}
 
+	Log.Info("Connecting Vnets...")
 	for i := 0; i < len(this.vnetsOrder)-1; i++ {
 		for j := i + 1; j < len(this.vnetsOrder); j++ {
 			connectVnets(this.vnetsOrder[i], this.vnetsOrder[j])
 		}
 	}
 
+	Log.Info("Waiting for Vnets topology...")
 	if !WaitForCondition(this.areVnetsConnected, 2, nil, "Vnets are not ready and connected") {
 		panic("Vnets are not ready and connects ")
 	}
 
+	Log.Info("Creating Vnics...")
 	for _, vNetPort := range vnetPorts {
 		for i := 0; i < vnicCountPervNet; i++ {
 			if i == vnicCountPervNet-1 {
@@ -67,14 +71,16 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 		}
 	}
 
+	Log.Info("Waiting for vnets health...")
 	if !WaitForCondition(this.areVnetsHaveAllVnics, 2, nil, "Vnet are not ready 2") {
 		for _, vnet := range this.vnets {
 			hc, _ := health.HealthServiceCache(vnet.Resources())
 			fmt.Println(vnet.Resources().SysConfig().LocalAlias, " ", vnet.ExternalCount(), vnet.LocalCount(), hc.Size())
 		}
-		panic("Vnet are not ready 2")
+		panic("Vnets health is not ready")
 	}
 
+	Log.Info("Waiting for vnics health...")
 	if !WaitForCondition(this.areVnicsReady, 2, nil, "Vnics are not ready!") {
 		vnicName := ""
 		vnicSum := 0
@@ -99,10 +105,12 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 		panic("Vnics are not ready, vnic " + vnicName + " has only " + strconv.Itoa(vnicSum) + " instead of 15")
 	}
 
+	Log.Info("Waiting for test services leader & participants...")
 	if !WaitForCondition(this.areVnicsServicesTransactionReady, 5, nil, "Vnics are not ready!") {
 		panic("Vnic Test Services Transactions are not ready")
 	}
 
+	Log.Info("Waiting for test services in health...")
 	if !WaitForCondition(this.areVnicsServicesReady, 5, nil, "Vnics are not ready!") {
 		panic("Vnic Test Services are not ready")
 	}
