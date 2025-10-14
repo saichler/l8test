@@ -12,6 +12,7 @@ import (
 	. "github.com/saichler/l8test/go/infra/t_resources"
 	. "github.com/saichler/l8test/go/infra/t_service"
 	. "github.com/saichler/l8types/go/ifs"
+	"github.com/saichler/l8types/go/types/l8health"
 )
 
 type TestTopology struct {
@@ -66,7 +67,7 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 		}
 	}
 
-	if !WaitForCondition(this.areVnetsHaveAllVnics, 3, nil, "Vnet are not ready 2") {
+	if !WaitForCondition(this.areVnetsHaveAllVnics, 2, nil, "Vnet are not ready 2") {
 		for _, vnet := range this.vnets {
 			hc, _ := health.HealthServiceCache(vnet.Resources())
 			fmt.Println(vnet.Resources().SysConfig().LocalAlias, " ", vnet.ExternalCount(), vnet.LocalCount(), hc.Size())
@@ -74,22 +75,26 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 		panic("Vnet are not ready 2")
 	}
 
-	if !WaitForCondition(this.areVnicsReady, 5, nil, "Vnics are not ready!") {
+	if !WaitForCondition(this.areVnicsReady, 2, nil, "Vnics are not ready!") {
 		vnicName := ""
 		vnicSum := 0
+		hc := make(map[string]*l8health.L8Health)
 		for vnetNum := 1; vnetNum <= 3; vnetNum++ {
 			for vnicNum := 1; vnicNum <= 4; vnicNum++ {
 				nic := this.VnicByVnetNum(vnetNum, vnicNum)
-				hc, _ := health.HealthServiceCache(nic.Resources())
-				if hc.Size() < 15 {
+				hc = health.All(nic.Resources())
+				if len(hc) < 15 {
 					vnicName = nic.Resources().SysConfig().LocalAlias
-					vnicSum = hc.Size()
+					vnicSum = len(hc)
 					break
 				}
 			}
 			if vnicName != "" {
 				break
 			}
+		}
+		for _, hp := range hc {
+			fmt.Println(" - ", hp.Alias, " - ")
 		}
 		panic("Vnics are not ready, vnic " + vnicName + " has only " + strconv.Itoa(vnicSum) + " instead of 15")
 	}
