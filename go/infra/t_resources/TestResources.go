@@ -2,10 +2,14 @@ package t_resources
 
 import (
 	"bytes"
+	"fmt"
 	"strconv"
 	"testing"
 	"time"
 
+	"github.com/saichler/l8bus/go/overlay/protocol"
+	"github.com/saichler/l8reflect/go/reflect/cloning"
+	"github.com/saichler/l8reflect/go/reflect/introspecting"
 	"github.com/saichler/l8services/go/services/manager"
 	"github.com/saichler/l8types/go/ifs"
 	"github.com/saichler/l8types/go/testtypes"
@@ -13,8 +17,6 @@ import (
 	"github.com/saichler/l8utils/go/utils/logger"
 	"github.com/saichler/l8utils/go/utils/registry"
 	"github.com/saichler/l8utils/go/utils/resources"
-	"github.com/saichler/l8reflect/go/reflect/cloning"
-	"github.com/saichler/l8reflect/go/reflect/introspecting"
 )
 
 const (
@@ -133,6 +135,10 @@ func CloneTestModel(a *testtypes.TestProto) *testtypes.TestProto {
 }
 
 func WaitForCondition(cond func() bool, timeoutInSeconds int64, t *testing.T, failMessage string) bool {
+	fmt.Println("Messages Created Start:", protocol.MessagesCreated())
+	defer func() {
+		fmt.Println("Messages Created End:", protocol.MessagesCreated())
+	}()
 	start := time.Now().UnixMilli()
 	end := start + timeoutInSeconds*1000
 	for start < end {
