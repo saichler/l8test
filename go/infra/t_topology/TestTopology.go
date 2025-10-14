@@ -111,7 +111,19 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 	}
 
 	Log.Info("Waiting for test services leader & participants...")
-	if !WaitForCondition(this.areVnicsServicesTransactionReady, 10, nil, "Vnics are not ready!") {
+	if !WaitForCondition(this.areVnicsServicesTransactionReady, 20, nil, "Vnics are not ready!") {
+		for vnetNum := 1; vnetNum <= 3; vnetNum++ {
+			for vnicNum := 1; vnicNum <= 3; vnicNum++ {
+				nic := this.VnicByVnetNum(vnetNum, vnicNum)
+				if nic.Resources().Services().GetLeader("Tests", 1) == "" {
+					fmt.Println("vNic ", nic.Resources().SysConfig().LocalAlias, " Does not have a leader for Tests")
+				}
+				participants := len(nic.Resources().Services().GetParticipants("Tests", 1))
+				if participants != 9 {
+					fmt.Println("vNic ", nic.Resources().SysConfig().LocalAlias, " Participants ", participants)
+				}
+			}
+		}
 		panic("Vnic Test Services Transactions are not ready")
 	}
 
