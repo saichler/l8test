@@ -105,15 +105,16 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 		panic("Vnics are not ready, vnic " + vnicName + " has only " + strconv.Itoa(vnicSum) + " instead of 15")
 	}
 
-	Log.Info("Waiting for test services leader & participants...")
-	if !WaitForCondition(this.areVnicsServicesTransactionReady, 5, nil, "Vnics are not ready!") {
-		panic("Vnic Test Services Transactions are not ready")
-	}
-
 	Log.Info("Waiting for test services in health...")
 	if !WaitForCondition(this.areVnicsServicesReady, 5, nil, "Vnics are not ready!") {
 		panic("Vnic Test Services are not ready")
 	}
+
+	Log.Info("Waiting for test services leader & participants...")
+	if !WaitForCondition(this.areVnicsServicesTransactionReady, 10, nil, "Vnics are not ready!") {
+		panic("Vnic Test Services Transactions are not ready")
+	}
+
 	return this
 }
 
