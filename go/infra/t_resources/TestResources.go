@@ -135,9 +135,9 @@ func CloneTestModel(a *testtypes.TestProto) *testtypes.TestProto {
 }
 
 func WaitForCondition(cond func() bool, timeoutInSeconds int64, t *testing.T, failMessage string) bool {
-	fmt.Println("Messages Created Start:", protocol.MessagesCreated())
+	fmt.Println("Messages Created Start:", protocol.MsgLog.Total())
 	defer func() {
-		fmt.Println("Messages Created End:", protocol.MessagesCreated())
+		fmt.Println("Messages Created End:", protocol.MsgLog.Total())
 	}()
 	start := time.Now().UnixMilli()
 	end := start + timeoutInSeconds*1000
