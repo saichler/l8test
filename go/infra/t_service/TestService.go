@@ -189,7 +189,7 @@ func (this *TestServiceTransactionHandler) ReplicationCount() int {
 func (this *TestServiceTransactionHandler) KeyOf(elements ifs.IElements, resources ifs.IResources) string {
 	return ""
 }
-func (this *TestServiceTransactionHandler) ConcurrentGets() bool {
+func (this *TestServiceTransactionHandler) Voter() bool {
 	return true
 }
 func (this *TestServiceTransactionHandler) WebService() ifs.IWebService {
@@ -212,7 +212,7 @@ func (this *TestServiceReplicationHandler) Replication() bool {
 func (this *TestServiceReplicationHandler) ReplicationCount() int {
 	return 2
 }
-func (this *TestServiceReplicationHandler) ConcurrentGets() bool {
+func (this *TestServiceReplicationHandler) Voter() bool {
 	return true
 }
 func (this *TestServiceReplicationHandler) KeyOf(elements ifs.IElements, resources ifs.IResources) string {
