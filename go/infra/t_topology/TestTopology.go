@@ -8,7 +8,6 @@ import (
 	"github.com/saichler/l8bus/go/overlay/health"
 	"github.com/saichler/l8bus/go/overlay/protocol"
 	. "github.com/saichler/l8bus/go/overlay/vnet"
-	. "github.com/saichler/l8bus/go/overlay/vnic"
 	. "github.com/saichler/l8test/go/infra/t_resources"
 	. "github.com/saichler/l8test/go/infra/t_service"
 	. "github.com/saichler/l8types/go/ifs"
@@ -321,22 +320,18 @@ func (this *TestTopology) AllVnics() []IVNic {
 	return result
 }
 
-func (this *TestTopology) RenewVnic(alias string) {
+func (this *TestTopology) RenewVnic(vnetNum, vnicNum int) {
+	nic := this.VnicByVnetNum(vnetNum, vnicNum)
+	oldSysConfig := nic.Resources().SysConfig()
+	nic.Shutdown()
+	_vnic, handler, trHandler, repHandler := createVnic(int(oldSysConfig.VnetPort), vnicNum, 0, Debug_Level)
 	this.mtx.Lock()
 	defer this.mtx.Unlock()
-	nic, ok := this.vnics[alias]
-	if ok {
-		nic.Shutdown()
-		delete(this.vnics, alias)
-		r := nic.Resources()
-		r.SysConfig().LocalUuid = ""
-		r.SysConfig().RemoteUuid = ""
-		nic = NewVirtualNetworkInterface(nic.Resources(), nil)
-		nic.Start()
-		this.vnics[alias] = nic
-	} else {
-		Log.Error("Unable to find vnic ", alias)
-	}
+
+	this.vnics[_vnic.Resources().SysConfig().LocalAlias] = _vnic
+	this.handlers[_vnic.Resources().SysConfig().LocalAlias] = handler
+	this.trHandlers[_vnic.Resources().SysConfig().LocalAlias] = trHandler
+	this.repHandlers[_vnic.Resources().SysConfig().LocalAlias] = repHandler
 }
 
 func (this *TestTopology) SetLogLevel(lvl LogLevel) {
