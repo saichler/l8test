@@ -346,8 +346,9 @@ func (this *TestTopology) SetLogLevel(lvl LogLevel) {
 }
 
 func (this *TestTopology) ReActivateTestService(nic IVNic) {
-	h, err := nic.Resources().Services().Activate(ServiceType, ServiceName, 0, nic.Resources(), nil,
-		nic.Resources().SysConfig().LocalAlias)
+	sla := NewServiceLevelAgreement(&TestServiceHandler{}, ServiceName, 0, false, nil)
+	sla.SetArgs(nic.Resources().SysConfig().LocalAlias)
+	h, err := nic.Resources().Services().Activate(sla, nic)
 	if err != nil {
 		panic(err)
 	}

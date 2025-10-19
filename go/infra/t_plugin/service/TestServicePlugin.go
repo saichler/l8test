@@ -38,19 +38,25 @@ func (this *TestServicePlugin) Install(vnic ifs.IVNic) error {
 	vnic.Resources().Services().RegisterServiceHandlerType(&t_service.TestServiceTransactionHandler{})
 	vnic.Resources().Services().RegisterServiceHandlerType(&t_service.TestServiceReplicationHandler{})
 
-	_, err := vnic.Resources().Services().Activate(t_service.ServiceType, t_service.ServiceName, 0, vnic.Resources(), nil, "plugin")
+	sla := ifs.NewServiceLevelAgreement(&t_service.TestServiceHandler{}, t_service.ServiceName, 0, false, nil)
+	sla.SetArgs("plugin")
+	_, err := vnic.Resources().Services().Activate(sla, vnic)
 	if err != nil {
 		fmt.Println("Error:", err.Error())
 		return err
 	}
 
-	_, err = vnic.Resources().Services().Activate(t_service.ServiceTrType, t_service.ServiceName, 1, vnic.Resources(), nil, "plugin")
+	sla = ifs.NewServiceLevelAgreement(&t_service.TestServiceTransactionHandler{}, t_service.ServiceName, 1, true, nil)
+	sla.SetArgs("plugin")
+	_, err = vnic.Resources().Services().Activate(sla, vnic)
 	if err != nil {
 		fmt.Println("Error:", err.Error())
 		return err
 	}
 
-	_, err = vnic.Resources().Services().Activate(t_service.ServiceRepType, t_service.ServiceName, 2, vnic.Resources(), vnic, "plugin")
+	sla = ifs.NewServiceLevelAgreement(&t_service.TestServiceReplicationHandler{}, t_service.ServiceName, 2, true, nil)
+	sla.SetArgs("plugin")
+	_, err = vnic.Resources().Services().Activate(sla, vnic)
 	if err != nil {
 		fmt.Println("Error:", err.Error())
 		return err

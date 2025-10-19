@@ -36,24 +36,21 @@ const (
 
 var test2Handler *TestServiceReplicationHandler
 
-func (this *TestServiceHandler) Activate(serviceName string, serviceArea byte,
-	r ifs.IResources, l ifs.IServiceCacheListener, args ...interface{}) error {
-	this.name = args[0].(string)
+func (this *TestServiceHandler) Activate(sla *ifs.ServiceLevelAgreement, vnic ifs.IVNic) error {
+	this.name = sla.Args()[0].(string)
 	return nil
 }
 
-func (this *TestServiceTransactionHandler) Activate(serviceName string, serviceArea byte,
-	r ifs.IResources, l ifs.IServiceCacheListener, args ...interface{}) error {
-	this.name = args[0].(string)
+func (this *TestServiceTransactionHandler) Activate(sla *ifs.ServiceLevelAgreement, vnic ifs.IVNic) error {
+	this.name = sla.Args()[0].(string)
 	return nil
 }
 
-func (this *TestServiceReplicationHandler) Activate(serviceName string, serviceArea byte,
-	r ifs.IResources, l ifs.IServiceCacheListener, args ...interface{}) error {
-	this.name = args[0].(string)
-	rnode, _ := r.Introspector().Inspect(testtypes.TestProto{})
+func (this *TestServiceReplicationHandler) Activate(sla *ifs.ServiceLevelAgreement, vnic ifs.IVNic) error {
+	this.name = sla.Args()[0].(string)
+	rnode, _ := vnic.Resources().Introspector().Inspect(testtypes.TestProto{})
 	introspecting.AddPrimaryKeyDecorator(rnode, "MyString")
-	this.cache = dcache.NewReplicationCache(r, nil)
+	this.cache = dcache.NewReplicationCache(vnic.Resources(), nil)
 	this.postReplica = &sync.Map{}
 	this.getReplica = &sync.Map{}
 	test2Handler = this

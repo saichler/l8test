@@ -27,10 +27,8 @@ func createVnic(vnetPort int, vnicNum int, serviceArea int32, level ifs.LogLevel
 	if serviceArea != -1 {
 		_resources.Registry().Register(&testtypes.TestProtoList{})
 		_resources.Registry().Register(&testtypes.TestProto{})
-		_resources.Services().RegisterServiceHandlerType(&t_service.TestServiceHandler{})
-		_resources.Services().RegisterServiceHandlerType(&t_service.TestServiceTransactionHandler{})
-		_resources.Services().RegisterServiceHandlerType(&t_service.TestServiceReplicationHandler{})
 	}
+
 	_vnic := vnic.NewVirtualNetworkInterface(_resources, nil)
 	_vnic.Resources().SysConfig().KeepAliveIntervalSeconds = 30
 	_vnic.Start()
@@ -38,19 +36,25 @@ func createVnic(vnetPort int, vnicNum int, serviceArea int32, level ifs.LogLevel
 	if serviceArea != -1 {
 		_vnic.WaitForConnection()
 
-		h, err := _resources.Services().Activate(t_service.ServiceType, t_service.ServiceName, 0, _resources, _vnic, alias)
+		sla := ifs.NewServiceLevelAgreement(&t_service.TestServiceHandler{}, t_service.ServiceName, 0, false, nil)
+		sla.SetArgs(alias)
+		h, err := _resources.Services().Activate(sla, _vnic)
 		if err != nil {
 			panic(err)
 		}
 		handler = h.(*t_service.TestServiceHandler)
 
-		hTr, err := _resources.Services().Activate(t_service.ServiceTrType, t_service.ServiceName, 1, _resources, _vnic, alias)
+		sla = ifs.NewServiceLevelAgreement(&t_service.TestServiceTransactionHandler{}, t_service.ServiceName, 1, true, nil)
+		sla.SetArgs(alias)
+		hTr, err := _resources.Services().Activate(sla, _vnic)
 		if err != nil {
 			panic(err)
 		}
 		handlerTr = hTr.(*t_service.TestServiceTransactionHandler)
 
-		hRep, err := _resources.Services().Activate(t_service.ServiceRepType, t_service.ServiceName, 2, _resources, _vnic, alias)
+		sla = ifs.NewServiceLevelAgreement(&t_service.TestServiceReplicationHandler{}, t_service.ServiceName, 2, true, nil)
+		sla.SetArgs(alias)
+		hRep, err := _resources.Services().Activate(sla, _vnic)
 		if err != nil {
 			panic(err)
 		}
