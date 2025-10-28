@@ -9,14 +9,10 @@ import (
 
 	"github.com/saichler/l8bus/go/overlay/protocol"
 	"github.com/saichler/l8reflect/go/reflect/cloning"
-	"github.com/saichler/l8reflect/go/reflect/introspecting"
-	"github.com/saichler/l8services/go/services/manager"
 	"github.com/saichler/l8types/go/ifs"
 	"github.com/saichler/l8types/go/testtypes"
-	"github.com/saichler/l8types/go/types/l8sysconfig"
+	"github.com/saichler/l8utils/go/utils"
 	"github.com/saichler/l8utils/go/utils/logger"
-	"github.com/saichler/l8utils/go/utils/registry"
-	"github.com/saichler/l8utils/go/utils/resources"
 )
 
 const (
@@ -28,26 +24,9 @@ var Log = logger.NewLoggerDirectImpl(&logger.FmtLogMethod{})
 
 func CreateResources(vnetPort, vnicNum int, level ifs.LogLevel) (ifs.IResources, string) {
 	alias := AliasOf(vnetPort, vnicNum)
-	_log := logger.NewLoggerDirectImpl(&logger.FmtLogMethod{})
-	_log.SetLogLevel(level)
-	_resources := resources.NewResources(_log)
-	_resources.Set(registry.NewRegistry())
-	_security, err := ifs.LoadSecurityProvider(_resources)
-	if err != nil {
-		panic("Failed to load security provider " + err.Error())
-	}
-	_resources.Set(_security)
-	_config := &l8sysconfig.L8SysConfig{MaxDataSize: resources.DEFAULT_MAX_DATA_SIZE,
-		RxQueueSize: resources.DEFAULT_QUEUE_SIZE,
-		TxQueueSize: resources.DEFAULT_QUEUE_SIZE,
-		LocalAlias:  alias,
-		VnetPort:    uint32(vnetPort)}
-	_resources.Set(_config)
-	_introspector := introspecting.NewIntrospect(_resources.Registry())
-	_resources.Set(_introspector)
-	_servicepoints := manager.NewServices(_resources)
-	_resources.Set(_servicepoints)
-	return _resources, alias
+	res := utils.NewResources(alias, uint16(vnetPort), 0)
+	res.Logger().SetLogLevel(level)
+	return res, alias
 }
 
 func AliasOf(vnetPort, vnicNum int) string {
