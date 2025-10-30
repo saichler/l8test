@@ -169,6 +169,14 @@ func (this *TestServiceHandler) WebService() ifs.IWebService {
 	return web.New(ServiceName, 0, pb, pb, pb, pb, pb, pb, pb, pb, pb, pblist)
 }
 
+func (this *TestServiceHandler) Merge(mapr map[string]ifs.IElements) ifs.IElements {
+	results := make([]interface{}, 0)
+	for _, elem := range mapr {
+		results = append(results, elem)
+	}
+	return New(nil, results)
+}
+
 type TestServiceTransactionHandler struct {
 	TestServiceBase
 }
