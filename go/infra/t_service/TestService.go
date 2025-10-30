@@ -171,8 +171,10 @@ func (this *TestServiceHandler) WebService() ifs.IWebService {
 
 func (this *TestServiceHandler) Merge(mapr map[string]ifs.IElements) ifs.IElements {
 	results := make([]interface{}, 0)
-	for _, elem := range mapr {
-		results = append(results, elem)
+	for _, elems := range mapr {
+		for _, elem := range elems.Elements() {
+			results = append(results, elem)
+		}
 	}
 	return New(nil, results)
 }
