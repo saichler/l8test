@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/saichler/l8reflect/go/reflect/introspecting"
+	"github.com/saichler/l8reflect/go/reflect/helping"
 	"github.com/saichler/l8test/go/infra/t_service"
 	"github.com/saichler/l8types/go/ifs"
 	"github.com/saichler/l8types/go/testtypes"
@@ -25,7 +25,7 @@ func (this TestServicePlugin) InstallRegistry(vnic ifs.IVNic) error {
 	if err != nil {
 		return err
 	}
-	introspecting.AddPrimaryKeyDecorator(node, "MyString")
+	helping.AddPrimaryKeyDecorator(node, "MyString")
 	vnic.Resources().Registry().Register(&testtypes.TestProtoList{})
 	return nil
 }

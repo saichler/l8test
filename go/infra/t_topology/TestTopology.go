@@ -198,7 +198,11 @@ func (this *TestTopology) areVnetsHaveAllVnics() bool {
 		if vnet.LocalCount() != 4 {
 			return false
 		}
-		hc, _ := health.HealthServiceCache(vnet.Resources())
+		hc, ok := health.HealthServiceCache(vnet.Resources())
+		if hc == nil || !ok {
+			hc, ok = health.HealthServiceCache(vnet.Resources())
+			panic("nil health cache")
+		}
 		if hc.Size() < 15 {
 			return false
 		}

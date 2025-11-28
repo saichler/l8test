@@ -1,9 +1,9 @@
 package main
 
 import (
+	"github.com/saichler/l8reflect/go/reflect/helping"
 	"github.com/saichler/l8types/go/ifs"
 	"github.com/saichler/l8types/go/testtypes"
-	"github.com/saichler/l8reflect/go/reflect/introspecting"
 )
 
 var Plugin ifs.IPlugin = &TestRegistryPlugin{}
@@ -21,7 +21,7 @@ func (this *TestRegistryPlugin) Install(vnic ifs.IVNic) error {
 	if err != nil {
 		return err
 	}
-	introspecting.AddPrimaryKeyDecorator(node, "MyString")
+	helping.AddPrimaryKeyDecorator(node, "MyString")
 	vnic.Resources().Registry().Register(&testtypes.TestProtoList{})
 	return nil
 }

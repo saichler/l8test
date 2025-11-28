@@ -5,7 +5,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/saichler/l8reflect/go/reflect/introspecting"
+	"github.com/saichler/l8reflect/go/reflect/helping"
 	"github.com/saichler/l8services/go/services/dcache"
 	. "github.com/saichler/l8srlz/go/serialize/object"
 	. "github.com/saichler/l8test/go/infra/t_resources"
@@ -49,7 +49,7 @@ func (this *TestServiceTransactionHandler) Activate(sla *ifs.ServiceLevelAgreeme
 func (this *TestServiceReplicationHandler) Activate(sla *ifs.ServiceLevelAgreement, vnic ifs.IVNic) error {
 	this.name = sla.Args()[0].(string)
 	rnode, _ := vnic.Resources().Introspector().Inspect(testtypes.TestProto{})
-	introspecting.AddPrimaryKeyDecorator(rnode, "MyString")
+	helping.AddPrimaryKeyDecorator(rnode, "MyString")
 	this.cache = dcache.NewReplicationCache(vnic.Resources(), nil)
 	this.postReplica = &sync.Map{}
 	this.getReplica = &sync.Map{}
