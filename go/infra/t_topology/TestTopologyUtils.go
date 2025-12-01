@@ -32,9 +32,9 @@ func createVnic(vnetPort int, vnicNum int, serviceArea int32, level ifs.LogLevel
 	_vnic := vnic.NewVirtualNetworkInterface(_resources, nil)
 	_vnic.Resources().SysConfig().KeepAliveIntervalSeconds = 30
 	_vnic.Start()
+	_vnic.WaitForConnection()
 
 	if serviceArea != -1 {
-		_vnic.WaitForConnection()
 
 		sla := ifs.NewServiceLevelAgreement(&t_service.TestServiceHandler{}, t_service.ServiceName, 0, false, nil)
 		sla.SetArgs(alias)
