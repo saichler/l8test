@@ -47,7 +47,7 @@ func (this *TestServiceTransactionHandler) Activate(sla *ifs.ServiceLevelAgreeme
 
 func (this *TestServiceReplicationHandler) Activate(sla *ifs.ServiceLevelAgreement, vnic ifs.IVNic) error {
 	this.name = sla.Args()[0].(string)
-	vnic.Resources().Introspector().Decorators().AddPrimaryKeyDecorator(sla.ServiceItem(), "MyString")
+	vnic.Resources().Introspector().Decorators().AddPrimaryKeyDecorator(&testtypes.TestProto{}, "MyString")
 	this.cache = dcache.NewReplicationCache(vnic.Resources(), nil)
 	this.postReplica = &sync.Map{}
 	this.getReplica = &sync.Map{}
