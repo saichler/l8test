@@ -27,6 +27,7 @@ func CreateResources(vnetPort, vnicNum int, level ifs.LogLevel) (ifs.IResources,
 	res := utils.NewResources(alias, uint16(vnetPort), 0)
 	res.Logger().SetLogLevel(level)
 	res.Introspector().Decorators().AddPrimaryKeyDecorator(&testtypes.TestProto{}, "MyString")
+	res.Registry().Register(&testtypes.TestProtoList{})
 	return res, alias
 }
 
