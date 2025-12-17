@@ -164,7 +164,13 @@ func (this *TestServiceHandler) TransactionConfig() ifs.ITransactionConfig {
 func (this *TestServiceHandler) WebService() ifs.IWebService {
 	pb := &testtypes.TestProto{}
 	pblist := &testtypes.TestProtoList{}
-	return web.New(ServiceName, 0, pb, pb, pb, pb, pb, pb, pb, pb, pb, pblist)
+	webSvr := web.New(ServiceName, 0, 0)
+	webSvr.AddEndpoint(pb, ifs.POST, pb)
+	webSvr.AddEndpoint(pb, ifs.PUT, pb)
+	webSvr.AddEndpoint(pb, ifs.PATCH, pb)
+	webSvr.AddEndpoint(pb, ifs.DELETE, pb)
+	webSvr.AddEndpoint(pb, ifs.GET, pblist)
+	return webSvr
 }
 
 func (this *TestServiceHandler) Merge(mapr map[string]ifs.IElements) ifs.IElements {
@@ -199,7 +205,13 @@ func (this *TestServiceTransactionHandler) Voter() bool {
 }
 func (this *TestServiceTransactionHandler) WebService() ifs.IWebService {
 	pb := &testtypes.TestProto{}
-	return web.New(ServiceName, 0, pb, pb, pb, pb, pb, pb, pb, pb, pb, pb)
+	webSvr := web.New(ServiceName, 0, 0)
+	webSvr.AddEndpoint(pb, ifs.POST, pb)
+	webSvr.AddEndpoint(pb, ifs.PUT, pb)
+	webSvr.AddEndpoint(pb, ifs.PATCH, pb)
+	webSvr.AddEndpoint(pb, ifs.DELETE, pb)
+	webSvr.AddEndpoint(pb, ifs.GET, pb)
+	return webSvr
 }
 
 type TestServiceReplicationHandler struct {
@@ -226,6 +238,12 @@ func (this *TestServiceReplicationHandler) KeyOf(elements ifs.IElements, resourc
 }
 func (this *TestServiceReplicationHandler) WebService() ifs.IWebService {
 	pb := &testtypes.TestProto{}
-	pbList := &testtypes.TestProtoList{}
-	return web.New(ServiceName, 0, pb, pb, pb, pb, pb, pb, pb, pb, pb, pbList)
+	pblist := &testtypes.TestProtoList{}
+	webSvr := web.New(ServiceName, 0, 0)
+	webSvr.AddEndpoint(pb, ifs.POST, pb)
+	webSvr.AddEndpoint(pb, ifs.PUT, pb)
+	webSvr.AddEndpoint(pb, ifs.PATCH, pb)
+	webSvr.AddEndpoint(pb, ifs.DELETE, pb)
+	webSvr.AddEndpoint(pb, ifs.GET, pblist)
+	return webSvr
 }
