@@ -36,7 +36,7 @@ func createVnic(vnetPort int, vnicNum int, serviceArea int32, level ifs.LogLevel
 
 	if serviceArea != -1 {
 
-		sla := ifs.NewServiceLevelAgreement(&t_service.TestServiceHandler{}, t_service.ServiceName, 0, false, nil)
+		sla := ifs.NewServiceLevelAgreement(&t_service.TestServiceHandler{}, t_service.ServiceName, 0, true, nil)
 		sla.SetArgs(alias)
 		h, err := _resources.Services().Activate(sla, _vnic)
 		if err != nil {
