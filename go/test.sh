@@ -14,6 +14,7 @@ GOPROXY=direct GOPRIVATE=github.com go mod tidy
 go mod vendor
 
 # Run unit tests with coverage
+go clean -testcache
 go test -tags=unit -v -coverpkg=./infra/... -coverprofile=cover.html ./... --failfast
 
 #rm -rf ./tests/loader.so
