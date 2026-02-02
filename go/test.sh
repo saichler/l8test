@@ -13,13 +13,6 @@ go mod init
 GOPROXY=direct GOPRIVATE=github.com go mod tidy
 go mod vendor
 
-cp ./vendor/github.com/saichler/l8utils/go/utils/resources/build-test-security.sh .
-chmod +x ./build-test-security.sh
-rm -rf vendor
-./build-test-security.sh
-rm -rf ./build-test-security.sh
-go mod vendor
-
 # Run unit tests with coverage
 go test -tags=unit -v -coverpkg=./infra/... -coverprofile=cover.html ./... --failfast
 

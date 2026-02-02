@@ -26,8 +26,8 @@ import (
 	"github.com/saichler/l8reflect/go/reflect/cloning"
 	"github.com/saichler/l8types/go/ifs"
 	"github.com/saichler/l8types/go/testtypes"
-	"github.com/saichler/l8utils/go/utils"
 	"github.com/saichler/l8utils/go/utils/logger"
+	"github.com/saichler/l8utils/go/utils/shared"
 )
 
 const (
@@ -39,7 +39,7 @@ var Log = logger.NewLoggerDirectImpl(&logger.FmtLogMethod{})
 
 func CreateResources(vnetPort, vnicNum int, level ifs.LogLevel) (ifs.IResources, string) {
 	alias := AliasOf(vnetPort, vnicNum)
-	res := utils.NewResources(alias, uint16(vnetPort), 0)
+	res := shared.ResourcesOf(alias, uint32(vnetPort), 0, false)
 	res.Logger().SetLogLevel(level)
 	res.Introspector().Decorators().AddPrimaryKeyDecorator(&testtypes.TestProto{}, "MyString")
 	res.Registry().Register(&testtypes.TestProtoList{})
