@@ -39,7 +39,7 @@ var Log = logger.NewLoggerDirectImpl(&logger.FmtLogMethod{})
 
 func CreateResources(vnetPort, vnicNum int, level ifs.LogLevel) (ifs.IResources, string) {
 	alias := AliasOf(vnetPort, vnicNum)
-	res := shared.ResourcesOf(alias, uint32(vnetPort), 0, false)
+	res := shared.ResourcesOf(alias, uint32(vnetPort), 0, "")
 	res.Logger().SetLogLevel(level)
 	res.Introspector().Decorators().AddPrimaryKeyDecorator(&testtypes.TestProto{}, "MyString")
 	res.Registry().Register(&testtypes.TestProtoList{})
