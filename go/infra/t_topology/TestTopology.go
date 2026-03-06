@@ -141,6 +141,20 @@ func NewTestTopology(vnicCountPervNet int, vnetPorts []int, level LogLevel) *Tes
 		panic("Vnic Test Services Transactions are not ready")
 	}
 
+	Log.Info("Waiting for MapReduce participants...")
+	if !WaitForCondition(this.areMapReduceParticipantsReady, 20, nil, "MapReduce participants are not ready!") {
+		for vnetNum := 1; vnetNum <= 3; vnetNum++ {
+			for vnicNum := 1; vnicNum <= 3; vnicNum++ {
+				nic := this.VnicByVnetNum(vnetNum, vnicNum)
+				participants := len(nic.Resources().Services().GetParticipants(ServiceName, 0))
+				if participants != 9 {
+					fmt.Println("vNic ", nic.Resources().SysConfig().LocalAlias, " MapReduce Participants ", participants)
+				}
+			}
+		}
+		panic("MapReduce participants are not ready")
+	}
+
 	return this
 }
 
@@ -193,6 +207,19 @@ func (this *TestTopology) areVnicsServicesTransactionReady() bool {
 		}
 	}
 
+	return true
+}
+
+func (this *TestTopology) areMapReduceParticipantsReady() bool {
+	for vnetNum := 1; vnetNum <= 3; vnetNum++ {
+		for vnicNum := 1; vnicNum <= 3; vnicNum++ {
+			nic := this.VnicByVnetNum(vnetNum, vnicNum)
+			participants := len(nic.Resources().Services().GetParticipants(ServiceName, 0))
+			if participants != 9 {
+				return false
+			}
+		}
+	}
 	return true
 }
 
