@@ -26,6 +26,10 @@ import (
 	"github.com/saichler/l8types/go/testtypes"
 )
 
+const (
+	ServiceGroupTest = "Tests"
+)
+
 func createVnet(vnetPort int, level ifs.LogLevel) *vnet.VNet {
 	_resources, _ := t_resources.CreateResources(vnetPort, -1, level)
 	_vnet := vnet.NewVNet(_resources)
@@ -52,6 +56,7 @@ func createVnic(vnetPort int, vnicNum int, serviceArea int32, level ifs.LogLevel
 	if serviceArea != -1 {
 
 		sla := ifs.NewServiceLevelAgreement(&t_service.TestServiceHandler{}, t_service.ServiceName, 0, true, nil)
+		sla.SetServiceGroup(ServiceGroupTest)
 		sla.SetArgs(alias)
 		h, err := _resources.Services().Activate(sla, _vnic)
 		if err != nil {
@@ -60,6 +65,7 @@ func createVnic(vnetPort int, vnicNum int, serviceArea int32, level ifs.LogLevel
 		handler = h.(*t_service.TestServiceHandler)
 
 		sla = ifs.NewServiceLevelAgreement(&t_service.TestServiceTransactionHandler{}, t_service.ServiceName, 1, true, nil)
+		sla.SetServiceGroup(ServiceGroupTest)
 		sla.SetArgs(alias)
 		hTr, err := _resources.Services().Activate(sla, _vnic)
 		if err != nil {
@@ -68,6 +74,7 @@ func createVnic(vnetPort int, vnicNum int, serviceArea int32, level ifs.LogLevel
 		handlerTr = hTr.(*t_service.TestServiceTransactionHandler)
 
 		sla = ifs.NewServiceLevelAgreement(&t_service.TestServiceReplicationHandler{}, t_service.ServiceName, 2, true, nil)
+		sla.SetServiceGroup(ServiceGroupTest)
 		sla.SetArgs(alias)
 		hRep, err := _resources.Services().Activate(sla, _vnic)
 		if err != nil {
