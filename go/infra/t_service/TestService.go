@@ -190,10 +190,22 @@ func (this *TestServiceHandler) WebService() ifs.IWebService {
 
 func (this *TestServiceHandler) Merge(mapr map[string]ifs.IElements) ifs.IElements {
 	results := make([]interface{}, 0)
-	for _, elems := range mapr {
+	for uuid, elems := range mapr {
+		if elems.Error() != nil {
+			Log.Error("MapReduce Merge: participant ", uuid, " returned error: ", elems.Error().Error())
+			continue
+		}
 		for _, elem := range elems.Elements() {
+			if elem == nil {
+				Log.Error("MapReduce Merge: participant ", uuid, " returned nil element")
+				continue
+			}
 			results = append(results, elem)
 		}
+	}
+	if len(results) != len(mapr) {
+		Log.Error("MapReduce Merge: expected ", len(mapr), " results, got ", len(results),
+			" (", len(mapr)-len(results), " participants failed)")
 	}
 	return New(nil, results)
 }
